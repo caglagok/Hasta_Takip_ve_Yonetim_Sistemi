@@ -67,6 +67,7 @@ namespace Prolab22__3.Controllers
 
                     if (result == 1)
                     {
+                        HttpContext.Session.SetInt32("HastaID", Convert.ToInt32(HastaID));
                         return RedirectToAction("Index", "HastaInterface");
                     }
                     else

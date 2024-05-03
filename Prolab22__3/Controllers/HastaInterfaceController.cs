@@ -4,22 +4,26 @@ using System.Collections.Generic;
 using Microsoft.Data.SqlClient;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace Prolab22__3.Controllers
 {
     public class HastaInterfaceController : Controller
     {
         private readonly string _connectionString;
+      
 
         public HastaInterfaceController(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection");
+           
         }
 
         public IActionResult Index()
         {
             // Giriş yapmış kullanıcı ID'si (hastaID) bir şekilde elde edilmeli, burada örnek olarak 1 kullanılmıştır.
-            int hastaID = 1;
+            int hastaID = HttpContext.Session.GetInt32("HastaID") ?? 1; // Varsayılan olarak 1 kullanıldı
             var model = new HastaDashboardViewModel
             {
                 Randevular = GetRandevular(hastaID),

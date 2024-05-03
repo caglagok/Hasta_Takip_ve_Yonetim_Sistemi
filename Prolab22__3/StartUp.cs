@@ -15,6 +15,13 @@ namespace Prolab22__3
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+                options.Cookie.IsEssential = true;
+            });
+            services.AddMvc();
             services.AddControllersWithViews();
         }
 
@@ -29,11 +36,16 @@ namespace Prolab22__3
                 app.UseExceptionHandler("/Home/Error");
                 app.UseHsts();
             }
-
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            
             app.UseRouting();
+           
             app.UseAuthorization();
+           
+            app.UseSession();
+            
+            
 
             app.UseEndpoints(endpoints =>
             {
