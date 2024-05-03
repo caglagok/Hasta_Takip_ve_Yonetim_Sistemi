@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "Yönetici Giriş";
+}
+
+<h2>Yönetici Girişi</h2>
+
+<form asp-action="LoginYonetici" asp-controller="Yoneticiler" method="post">
+    <div>
+        <label for="yoneticiId">YoneticiID:</label>
+        <input type="text" id="yoneticiId" name="yoneticiId" required>
+    </div>
+    <div>
+        <label for="password">Şifre:</label>
+        <input type="password" id="password" name="password" required>
+    </div>
+    <button type="submit">Giriş Yap</button>
+</form>

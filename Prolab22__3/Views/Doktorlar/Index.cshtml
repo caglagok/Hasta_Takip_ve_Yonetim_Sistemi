@@ -1,0 +1,39 @@
+﻿@model IEnumerable<Prolab22__3.Models.Doktor>
+
+@{
+    ViewData["Title"] = "Doktor Listesi";
+}
+
+<h1>Doktor Listesi</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Doktor ID</th>
+            <th>Ad</th>
+            <th>Soyad</th>
+            <th>Uzmanlık Alanı</th>
+            <th>Çalıştığı Hastane</th>
+            <th>İşlemler</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var doktor in Model)
+        {
+            <tr>
+                <td>@doktor.DoktorID</td>
+                <td>@doktor.Ad</td>
+                <td>@doktor.Soyad</td>
+                <td>@doktor.UzmanlikAlani</td>
+                <td>@doktor.CalistigiHastane</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@doktor.DoktorID">Düzenle</a> |
+                    <a asp-action="Details" asp-route-id="@doktor.DoktorID">Detaylar</a> |
+                    <a asp-action="Delete" asp-route-id="@doktor.DoktorID">Sil</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Create">Yeni Doktor Ekle</a>

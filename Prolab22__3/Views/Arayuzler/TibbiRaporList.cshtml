@@ -1,0 +1,21 @@
+﻿@namespace Prolab22__3.Views.Arayuzler
+@model List<Prolab22__3.Models.TibbiRapor>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tıbbi Rapor Listesi</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Tıbbi Rapor Listesi</h1>
+    <ul>
+        @foreach (var rapor in Model)
+        {
+            <li>Rapor Tarihi: @rapor.RaporTarihi - Rapor İçeriği: @rapor.RaporIcerigi</li>
+        }
+    </ul>
+</body>
+</html>

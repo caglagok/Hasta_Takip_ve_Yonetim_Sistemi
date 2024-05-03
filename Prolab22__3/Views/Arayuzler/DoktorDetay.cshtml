@@ -1,0 +1,20 @@
+﻿@namespace Prolab22__3.Views.Arayuzler
+@model Prolab22__3.Models.Doktor
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doktor Detayları</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Doktor Detayları</h1>
+    <div>
+        <p><strong>Doktor Adı Soyadı:</strong> @Model.Ad @Model.Soyad</p>
+        <p><strong>Uzmanlık Alanı:</strong> @Model.UzmanlikAlani</p>
+        <p><strong>Çalıştığı Hastane:</strong> @Model.CalistigiHastane</p>
+    </div>
+</body>
+</html>

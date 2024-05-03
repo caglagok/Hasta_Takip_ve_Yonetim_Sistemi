@@ -1,0 +1,21 @@
+﻿@namespace Prolab22__3.Views.Arayuzler
+@model List<Prolab22__3.Models.Randevu>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Randevu Listesi</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Randevu Listesi</h1>
+    <ul>
+        @foreach (var randevu in Model)
+        {
+            <li>Randevu Tarihi: @randevu.RandevuTarihi - Randevu Saati: @randevu.RandevuSaati</li>
+        }
+    </ul>
+</body>
+</html>

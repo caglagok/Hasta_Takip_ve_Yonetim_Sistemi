@@ -1,0 +1,33 @@
+﻿@namespace Prolab22__3.Views.Arayuzler
+@model Prolab22__3.Models.Randevu
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Randevu Ekle</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Randevu Ekle</h1>
+    <form action="/Randevu/Ekle" method="post">
+        <label for="tarih">Randevu Tarihi:</label>
+        <input type="date" id="tarih" name="tarih" required><br><br>
+        <label for="saat">Randevu Saati:</label>
+        <input type="time" id="saat" name="saat" required><br><br>
+        <label for="doktor">Doktor:</label>
+        <select id="doktor" name="doktor" required>
+            <option value="1">Doktor 1</option>
+            <option value="2">Doktor 2</option>
+            <!-- Diğer doktorları buraya ekleyin -->
+        </select><br><br>
+        <label for="hasta">Hasta:</label>
+        <select id="hasta" name="hasta" required>
+            <option value="1">Hasta 1</option>
+            <option value="2">Hasta 2</option>
+            <!-- Diğer hastaları buraya ekleyin -->
+        </select><br><br>
+        <input type="submit" value="Kaydet">
+    </form>
+</body>
+</html>

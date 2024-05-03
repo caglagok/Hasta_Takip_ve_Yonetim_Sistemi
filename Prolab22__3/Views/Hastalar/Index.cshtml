@@ -1,0 +1,43 @@
+﻿@model IEnumerable<Prolab22__3.Models.Hasta>
+
+@{
+    ViewData["Title"] = "Hasta Listesi";
+}
+
+<h1>Hasta Listesi</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Hasta ID</th>
+            <th>Ad</th>
+            <th>Soyad</th>
+            <th>Doğum Tarihi</th>
+            <th>Cinsiyet</th>
+            <th>Telefon Numarası</th>
+            <th>Adres</th>
+            <th>İşlemler</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var hasta in Model)
+        {
+            <tr>
+                <td>@hasta.HastaID</td>
+                <td>@hasta.Ad</td>
+                <td>@hasta.Soyad</td>
+                <td>@hasta.DogumTarihi.ToShortDateString()</td>
+                <td>@hasta.Cinsiyet</td>
+                <td>@hasta.TelefonNumarasi</td>
+                <td>@hasta.Adres</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@hasta.HastaID">Düzenle</a> |
+                    <a asp-action="Details" asp-route-id="@hasta.HastaID">Detaylar</a> |
+                    <a asp-action="Delete" asp-route-id="@hasta.HastaID">Sil</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Create">Yeni Hasta Ekle</a>

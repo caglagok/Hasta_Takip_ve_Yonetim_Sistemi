@@ -1,0 +1,22 @@
+﻿@namespace Prolab22__3.Views.Arayuzler
+@model Prolab22__3.Models.TibbiRapor
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tıbbi Rapor Ekle</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Tıbbi Rapor Ekle</h1>
+    <form action="/TibbiRapor/Ekle" method="post">
+        <label for="tarih">Rapor Tarihi:</label>
+        <input type="date" id="tarih" name="tarih" required><br><br>
+        <label for="icerik">Rapor İçeriği:</label>
+        <textarea id="icerik" name="icerik" rows="4" required></textarea><br><br>
+        <!-- Dosya yükleme alanı eklemek için gerekli HTML kodu buraya eklenebilir -->
+        <input type="submit" value="Kaydet">
+    </form>
+</body>
+</html>

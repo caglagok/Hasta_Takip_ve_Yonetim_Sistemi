@@ -1,0 +1,35 @@
+﻿@model IEnumerable<Prolab22__3.Models.Yonetici>
+
+@{
+    ViewData["Title"] = "Yönetici Listesi";
+}
+
+<h1>Yönetici Listesi</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Yönetici ID</th>
+            <th>Ad</th>
+            <th>Soyad</th>
+            <th>İşlemler</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var yonetici in Model)
+        {
+            <tr>
+                <td>@yonetici.YoneticiID</td>
+                <td>@yonetici.Ad</td>
+                <td>@yonetici.Soyad</td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@yonetici.YoneticiID">Düzenle</a> |
+                    <a asp-action="Details" asp-route-id="@yonetici.YoneticiID">Detaylar</a> |
+                    <a asp-action="Delete" asp-route-id="@yonetici.YoneticiID">Sil</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Create">Yeni Yönetici Ekle</a>

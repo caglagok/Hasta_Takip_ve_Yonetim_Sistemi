@@ -1,0 +1,53 @@
+﻿@model Prolab22__3.Models.HastaDashboardViewModel
+
+@{
+    ViewData["Title"] = "Hasta Dashboard";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="container">
+    <h3>Randevularınız</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Randevu Tarihi</th>
+                <th>Randevu Saati</th>
+                <th>Doktor Adı</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var randevu in Model.Randevular)
+            {
+                <tr>
+                    <td>@randevu.RandevuTarihi.ToString("dd/MM/yyyy")</td>
+                    <td>@randevu.RandevuSaati</td>
+                    <td>@randevu.DoktorAdi</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h3>Tıbbi Raporlarınız</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Rapor Tarihi</th>
+                <th>Rapor İçeriği</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var rapor in Model.TibbiRaporlar)
+            {
+                <tr>
+                    <td>@rapor.RaporTarihi.ToString("dd/MM/yyyy")</td>
+                    <td>@rapor.RaporIcerigi</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div>
+        <a class="btn btn-primary" href="@Url.Action("Create", "Randevular")">Yeni Randevu Al</a>
+    </div>
+</div>

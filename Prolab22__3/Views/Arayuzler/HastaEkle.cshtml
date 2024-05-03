@@ -1,0 +1,32 @@
+﻿@namespace Prolab22__3.Views.Arayuzler
+@model Prolab22__3.Models.Hasta
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hasta Ekle</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h1>Hasta Ekle</h1>
+    <form action="/Hasta/Ekle" method="post">
+        <label for="ad">Ad:</label>
+        <input type="text" id="ad" name="ad" required><br><br>
+        <label for="soyad">Soyad:</label>
+        <input type="text" id="soyad" name="soyad" required><br><br>
+        <label for="dogumTarihi">Doğum Tarihi:</label>
+        <input type="date" id="dogumTarihi" name="dogumTarihi" required><br><br>
+        <label for="cinsiyet">Cinsiyet:</label>
+        <select id="cinsiyet" name="cinsiyet" required>
+            <option value="Erkek">Erkek</option>
+            <option value="Kadın">Kadın</option>
+        </select><br><br>
+        <label for="telefon">Telefon Numarası:</label>
+        <input type="tel" id="telefon" name="telefon" required><br><br>
+        <label for="adres">Adres:</label>
+        <textarea id="adres" name="adres" required></textarea><br><br>
+        <input type="submit" value="Kaydet">
+    </form>
+</body>
+</html>

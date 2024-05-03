@@ -1,0 +1,17 @@
+﻿@{
+    ViewData["Title"] = "Doktor Giriş";
+}
+
+<h2>Doktor Girişi</h2>
+
+<form asp-action="LoginDoktor" asp-controller="Doktorlar" method="post">
+    <div>
+        <label for="doktorId">Doktor ID:</label>
+        <input type="text" id="doktorId" name="doktorId" required>
+    </div>
+    <div>
+        <label for="password">Şifre:</label>
+        <input type="password" id="password" name="password" required>
+    </div>
+    <button type="submit">Giriş Yap</button>
+</form>

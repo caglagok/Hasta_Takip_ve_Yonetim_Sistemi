@@ -1,0 +1,25 @@
+﻿@{
+    ViewData["Title"] = "Giriş Ekranı";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giriş Ekranı</title>
+    <link rel="stylesheet" href="~/css/styles.css">
+</head>
+<body>
+    <div class="text-center">
+        <h1 class="display-4">Hoş Geldiniz</h1>
+        <p>Lütfen giriş yapmak istediğiniz hesap türünü seçiniz:</p>
+        <div>
+            <!-- Hasta, Doktor ve Yönetici için giriş yönlendirmeleri -->
+            <button onclick="window.location.href='@Url.Action("LoginHasta", "Hastalar")'">Hasta Girişi</button>
+            <button onclick="window.location.href='@Url.Action("LoginDoktor", "Doktorlar")'">Doktor Girişi</button>
+            <button onclick="window.location.href='@Url.Action("LoginYonetici", "Yoneticiler")'">Yönetici Girişi</button>
+        </div>
+    </div>
+</body>
+</html>
