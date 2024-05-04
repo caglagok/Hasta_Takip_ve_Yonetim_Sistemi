@@ -1,33 +1,53 @@
-﻿@model Prolab22__3.Models.YoneticiViewModel
+﻿@model Prolab22__3.Models.YoneticiDashboardViewModel
 
 @{
-    ViewData["Title"] = "Yönetici Listesi";
+    ViewData["Title"] = "Yönetici Dashboard";
 }
 
-<h1>Yönetici Listesi</h1>
+<h1>@ViewData["Title"]</h1>
 
+<h2>Hastalar</h2>
 <table class="table">
     <thead>
         <tr>
-            <th>Yönetici ID</th>
+            <th>Hasta ID</th>
             <th>Ad</th>
             <th>Soyad</th>
-            <th>İşlemler</th>
+            <th>Diğer Bilgiler</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var yonetici in Model.Yoneticiler)
+        @foreach (var hasta in Model.Hastalar)
         {
             <tr>
-                <td>@yonetici.YoneticiID</td>
-                <td>@yonetici.Ad</td>
-                <td>@yonetici.Soyad</td>
-                <td>
-                    <a asp-controller="YoneticiInterface" asp-action="Details" asp-route-id="@yonetici.YoneticiID">Detaylar</a>
-                </td>
+                <td>@hasta.HastaID</td>
+                <td>@hasta.Ad</td>
+                <td>@hasta.Soyad</td>
+                <td>// Diğer hasta bilgileri</td>
             </tr>
         }
     </tbody>
 </table>
 
-<a asp-controller="YoneticiInterface" asp-action="Create">Yeni Yönetici Ekle</a>
+<h2>Doktorlar</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Doktor ID</th>
+            <th>Ad</th>
+            <th>Soyad</th>
+            <th>Uzmanlık Alanı</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var doktor in Model.Doktorlar)
+        {
+            <tr>
+                <td>@doktor.DoktorID</td>
+                <td>@doktor.Ad</td>
+                <td>@doktor.Soyad</td>
+                <td>@doktor.UzmanlikAlani</td>
+            </tr>
+        }
+    </tbody>
+</table>

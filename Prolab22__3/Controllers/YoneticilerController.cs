@@ -8,24 +8,24 @@ using Microsoft.Extensions.Configuration;
 
 namespace Prolab22__3.Controllers
 {
-    public class YoneticiController:Controller
+    public class YoneticilerController : Controller
     {
         private readonly string _connectionString;
 
-        public YoneticiController(IConfiguration configuration)
+        public YoneticilerController(IConfiguration configuration)
         {
-            _connectionString = configuration.GetConnectionString("DefaultConnection");
+            _connectionString = configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string is not configured.");
         }
 
         // GET: Yoneticiler
         public IActionResult Index()
         {
-            var yoneticiler = new List<Yonetici>();
-            using (var connection = new SqlConnection(_connectionString))
+            List<Yonetici> yoneticiler = new List<Yonetici>();
+            using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                var command = new SqlCommand("SELECT YoneticiID, Ad, Soyad, Password FROM Yoneticiler", connection);
+                SqlCommand command = new SqlCommand("SELECT YoneticiID, Ad, Soyad, Password FROM Yoneticiler", connection);
                 connection.Open();
-                using (var reader = command.ExecuteReader())
+                using (SqlDataReader reader = command.ExecuteReader())
                 {
                     while (reader.Read())
                     {
@@ -39,14 +39,14 @@ namespace Prolab22__3.Controllers
                     }
                 }
             }
-            var viewModel = new YoneticiViewModel();
-
-            // Hastaları ve doktorları çeken kodları buraya taşıyalım
-            viewModel.Hastalar = GetHastalar();
-            viewModel.Doktorlar = GetDoktorlar();
-
+            YoneticiDashboardViewModel viewModel = new YoneticiDashboardViewModel
+            {
+                Hastalar = GetHastalar(),
+                Doktorlar = GetDoktorlar(),
+                Yoneticiler = yoneticiler
+            };
             return View(viewModel);
-            return View(yoneticiler);
+           // return View(yoneticiler);
         }
 
 
@@ -60,19 +60,19 @@ namespace Prolab22__3.Controllers
         [HttpPost]
         public IActionResult LoginYonetici(int YoneticiID, string password)
         {
-            using (var connection = new SqlConnection(_connectionString))
+            try
             {
-                connection.Open();
-                var command = new SqlCommand("SELECT COUNT(1) FROM Yoneticiler WHERE YoneticiID = @YoneticiID AND Password = @Password ", connection);
+                using (var connection = new SqlConnection(_connectionString))
+            using (var command = new SqlCommand("SELECT COUNT(1) FROM Yoneticiler WHERE YoneticiID = @YoneticiID AND Password = @Password ", connection))
+            {
                 command.Parameters.AddWithValue("@YoneticiID", YoneticiID);
                 command.Parameters.AddWithValue("@Password", password);
-
+                connection.Open();
                 int result = Convert.ToInt32(command.ExecuteScalar());
 
                 if (result == 1)
                 {
-                    // Eğer kullanıcı bulunduysa ve bilgiler doğruysa, Hasta'nın ana sayfasına yönlendir.
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Index", "YoneticiInterface");
                 }
                 else
                 {
@@ -81,8 +81,16 @@ namespace Prolab22__3.Controllers
                     return View();
                 }
             }
+            }
+         catch (Exception ex)
+            {
+                // Log the error (uncomment ex variable name and write a log.)
+                ViewBag.ErrorMessage = "Bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.";
+                return View();
+            }  
         }
-        private List<Hasta> GetHastalar()
+
+    private List<Hasta> GetHastalar()
         {
             var hastalar = new List<Hasta>();
             using (var connection = new SqlConnection(_connectionString))

@@ -26,7 +26,7 @@
                 <td>@hasta.HastaID</td>
                 <td>@hasta.Ad</td>
                 <td>@hasta.Soyad</td>
-                <td>@hasta.DogumTarihi.ToShortDateString()</td>
+                <td>@(hasta.DogumTarihi.HasValue ? hasta.DogumTarihi.Value.ToShortDateString() : "Bilinmiyor")</td>
                 <td>@hasta.Cinsiyet</td>
                 <td>@hasta.TelefonNumarasi</td>
                 <td>@hasta.Adres</td>

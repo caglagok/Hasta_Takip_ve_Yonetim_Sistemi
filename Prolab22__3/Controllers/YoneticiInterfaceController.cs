@@ -18,6 +18,67 @@ namespace Prolab22__3.Controllers
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
+        public IActionResult Index()
+        {
+            YoneticiDashboardViewModel viewModel = new YoneticiDashboardViewModel
+            {
+                Hastalar = GetHastalar(),
+                Doktorlar = GetDoktorlar()
+            };
+            return View(viewModel);
+        }
+        private List<Hasta> GetHastalar()
+        {
+            var hastalar = new List<Hasta>(); // Hasta listesi için boş bir liste oluşturuyoruz.
+            using (var connection = new SqlConnection(_connectionString)) // Veritabanı bağlantısı
+            {
+                // SQL sorgusu: Hastalar tablosundan gerekli bilgileri seçiyoruz.
+                var command = new SqlCommand("SELECT HastaID, Ad, Soyad, DogumTarihi, Cinsiyet, TelefonNumarasi, Adres FROM Hastalar", connection);
+                connection.Open(); // Bağlantıyı açıyoruz.
+                using (var reader = command.ExecuteReader()) // Sorguyu çalıştırıp, sonuçları okuyoruz.
+                {
+                    while (reader.Read()) // Okunan her kayıt için
+                    {
+                        hastalar.Add(new Hasta // Hasta listesine yeni bir Hasta nesnesi ekliyoruz.
+                        {
+                            HastaID = reader.GetInt32(reader.GetOrdinal("HastaID")),
+                            Ad = reader.IsDBNull(reader.GetOrdinal("Ad")) ? null : reader.GetString(reader.GetOrdinal("Ad")),
+                            Soyad = reader.IsDBNull(reader.GetOrdinal("Soyad")) ? null : reader.GetString(reader.GetOrdinal("Soyad")),
+                            DogumTarihi = reader.IsDBNull(reader.GetOrdinal("DogumTarihi")) ? (DateTime?)null : reader.GetDateTime(reader.GetOrdinal("DogumTarihi")),
+                            Cinsiyet = reader.IsDBNull(reader.GetOrdinal("Cinsiyet")) ? null : reader.GetString(reader.GetOrdinal("Cinsiyet")),
+                            TelefonNumarasi = reader.IsDBNull(reader.GetOrdinal("TelefonNumarasi")) ? null : reader.GetString(reader.GetOrdinal("TelefonNumarasi")),
+                            Adres = reader.IsDBNull(reader.GetOrdinal("Adres")) ? null : reader.GetString(reader.GetOrdinal("Adres"))
+                        });
+                    }
+                }
+            }
+            return hastalar; // Doldurulmuş hasta listesini döndürüyoruz.
+        }
+
+
+        private List<Doktor> GetDoktorlar()
+        {
+            List<Doktor> doktorlar = new List<Doktor>();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var command = new SqlCommand("SELECT DoktorID, Ad, Soyad, UzmanlikAlani FROM Doktorlar", connection);
+                connection.Open();
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        doktorlar.Add(new Doktor
+                        {
+                            DoktorID = reader.GetInt32(0),
+                            Ad = reader.GetString(1),
+                            Soyad = reader.GetString(2),
+                            UzmanlikAlani = reader.GetString(3)
+                        });
+                    }
+                }
+            }
+            return doktorlar;
+        }
         // GET: YoneticiInterface/HastaEkle
         public IActionResult HastaEkle()
         {
