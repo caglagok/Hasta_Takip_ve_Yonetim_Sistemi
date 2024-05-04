@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Microsoft.Data.SqlClient;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Prolab22__3.Controllers
 {
@@ -41,6 +42,70 @@ namespace Prolab22__3.Controllers
             }
             return View(randevular);
         }
+
+        [HttpGet]
+        public IActionResult GetUzmanlikAlanlari()
+        {
+            List<string> uzmanlikAlanlari = new List<string>();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var command = new SqlCommand("SELECT DISTINCT UzmanlikAlani FROM Doktorlar", connection);
+                connection.Open();
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        uzmanlikAlanlari.Add(reader.GetString(0));
+                    }
+                }
+            }
+            return Json(uzmanlikAlanlari);
+        }
+
+        [HttpGet]
+        public IActionResult GetHastanelerByUzmanlik(string uzmanlik)
+        {
+            List<string> hastaneler = new List<string>();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var command = new SqlCommand("SELECT DISTINCT CalistigiHastane FROM Doktorlar WHERE UzmanlikAlani = @Uzmanlik", connection);
+                command.Parameters.AddWithValue("@Uzmanlik", uzmanlik);
+                connection.Open();
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        hastaneler.Add(reader.GetString(0));
+                    }
+                }
+            }
+            return Json(hastaneler);
+        }
+
+        [HttpGet]
+        public IActionResult GetDoktorlarByHastaneAndUzmanlik(string hastane, string uzmanlik)
+        {
+            List<object> doktorlar = new List<object>();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var command = new SqlCommand("SELECT DoktorID, Ad, Soyad FROM Doktorlar WHERE CalistigiHastane = @Hastane AND UzmanlikAlani = @Uzmanlik", connection);
+                command.Parameters.AddWithValue("@Hastane", hastane);
+                command.Parameters.AddWithValue("@Uzmanlik", uzmanlik);
+                connection.Open();
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        doktorlar.Add(new
+                        {
+                            DoktorID = reader.GetInt32(0),
+                            DoktorBilgisi = $"{reader.GetString(1)} {reader.GetString(2)}"
+                        });
+                    }
+                }
+            }
+            return Json(doktorlar);
+        }
         //GET: Randevular/Details/5
         public IActionResult Details(int id)
         {
@@ -75,29 +140,59 @@ namespace Prolab22__3.Controllers
         // GET: Randevular/Create
         public IActionResult Create()
         {
+            int hastaID = HttpContext.Session.GetInt32("HastaID") ?? throw new InvalidOperationException("Hasta girişi yapılmamış.");
+            var doktorlar = GetDoktorlar();
+
+            ViewBag.Doktorlar = new SelectList(doktorlar, "DoktorID", "DoktorBilgisi");
+            ViewBag.HastaID = hastaID;
+
             return View();
+        }
+       
+        private List<Doktor> GetDoktorlar()
+        {
+            List<Doktor> doktorlar = new List<Doktor>();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var command = new SqlCommand("SELECT DoktorID, Ad, Soyad, UzmanlikAlani FROM Doktorlar", connection);
+                connection.Open();
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        doktorlar.Add(new Doktor
+                        {
+                            DoktorID = reader.GetInt32(0),
+                            Ad = reader.GetString(1),
+                            Soyad = reader.GetString(2),
+                            UzmanlikAlani = reader.GetString(3)
+                        });
+                    }
+                }
+            }
+            return doktorlar;
         }
         // POST: Randevular/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("HastaID, DoktorID, RandevuTarihi, RandevuSaati")] Randevu randevu)
+        public ActionResult Create(Randevu randevu)
         {
             if (ModelState.IsValid)
             {
                 using (var connection = new SqlConnection(_connectionString))
                 {
-                    var command = new SqlCommand("INSERT INTO Randevular (HastaID,DoktorID, RandevuTarihi, RandevuSaati) VALUES (@HastaID, @DoktorID, @RandevuTarihi, @RandevuSaati)", connection);
+                    var command = new SqlCommand("INSERT INTO Randevular (HastaID, DoktorID, RandevuTarihi, RandevuSaati) VALUES (@HastaID, @DoktorID, @RandevuTarihi, @RandevuSaati)", connection);
                     command.Parameters.AddWithValue("@HastaID", randevu.HastaID);
                     command.Parameters.AddWithValue("@DoktorID", randevu.DoktorID);
                     command.Parameters.AddWithValue("@RandevuTarihi", randevu.RandevuTarihi);
                     command.Parameters.AddWithValue("@RandevuSaati", randevu.RandevuSaati);
-                  
-
                     connection.Open();
                     command.ExecuteNonQuery();
                 }
                 return RedirectToAction(nameof(Index));
             }
+
+            // Formdaki hataları düzeltmek üzere kullanıcıya formu tekrar göster
             return View(randevu);
         }
         // GET: Randevular/Edit/5
@@ -202,18 +297,5 @@ namespace Prolab22__3.Controllers
             }
             return RedirectToAction(nameof(Index));
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
     }
 }
