@@ -9,6 +9,9 @@
         public string? UzmanlikAlani { get; set; }
         public string? CalistigiHastane { get; set; }
         public string? Password { get; set; }
-
+        public string DoktorBilgisi
+        {
+            get { return $"{Ad} {Soyad} - {UzmanlikAlani}"; }
+        }
     }
 }
