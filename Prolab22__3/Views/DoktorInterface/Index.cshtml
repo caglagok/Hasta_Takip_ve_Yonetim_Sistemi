@@ -1,0 +1,50 @@
+﻿@model Prolab22__3.Models.DoktorDashboardViewModel
+
+@{
+    ViewData["Title"] = "Doktor Dashboard";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="container">
+    <h3>Alınan Randevular</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Randevu Tarihi</th>
+                <th>Randevu Saati</th>
+                <th>Hasta Adı</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var randevu in Model.Randevular)
+            {
+                <tr>
+                    <td>@randevu.RandevuTarihi.ToString("dd/MM/yyyy")</td>
+                    <td>@randevu.RandevuSaati</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h3>Hasta Tıbbi Raporları</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Rapor Tarihi</th>
+                <th>Hasta ID</th>
+                <th>Rapor İçeriği</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var rapor in Model.TibbiRaporlar)
+            {
+                <tr>
+                    <td>@rapor.RaporTarihi.ToString("dd/MM/yyyy")</td>
+                    <td>@rapor.HastaID</td>
+                    <td>@rapor.RaporIcerigi</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

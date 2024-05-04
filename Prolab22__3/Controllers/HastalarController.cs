@@ -85,8 +85,8 @@ namespace Prolab22__3.Controllers
             }
         } 
 
-            // GET: Hastalar/Details/5
-            public IActionResult Details(int id)
+        // GET: Hastalar/Details/5
+        public IActionResult Details(int id)
         {
             Hasta hasta = null;
             using (var connection = new SqlConnection(_connectionString))

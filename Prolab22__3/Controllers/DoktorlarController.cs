@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Prolab22__3.Models;
 using System;
+using System.Data;
 using System.Collections.Generic;
 using Microsoft.Data.SqlClient;
 using System.Linq;
@@ -47,30 +48,37 @@ namespace Prolab22__3.Controllers
             return View();
         }
 
-        // POST: Hastalar/LoginHasta
+        // POST: Doktorlar/LoginDoktor
         [HttpPost]
-        public IActionResult LoginDoktor(string doktorId, string password)
+        public IActionResult LoginDoktor(string DoktorID, string password)
         {
-            using (var connection = new SqlConnection(_connectionString))
+            try
             {
-                connection.Open();
-                var command = new SqlCommand("SELECT COUNT(1) FROM Users WHERE DoktorId = @DoktorId AND Password = @Password AND UserType = 'Doktor'", connection);
-                command.Parameters.AddWithValue("@UserId", doktorId);
-                command.Parameters.AddWithValue("@Password", password);
-
-                int result = Convert.ToInt32(command.ExecuteScalar());
-
-                if (result == 1)
+                using (var connection = new SqlConnection(_connectionString))
+                using (var command = new SqlCommand("SELECT COUNT(1) FROM Doktorlar WHERE DoktorID = @DoktorID AND Password = @Password", connection))
                 {
-                    // Eğer kullanıcı bulunduysa ve bilgiler doğruysa, Hasta'nın ana sayfasına yönlendir.
-                    return RedirectToAction("Index");
+                    command.Parameters.Add("@DoktorID", SqlDbType.Int).Value = DoktorID; // SqlDbType kullanıldı
+                    command.Parameters.Add("@Password", SqlDbType.NVarChar, 50).Value = password;
+                    connection.Open();
+                    int result = Convert.ToInt32(command.ExecuteScalar());
+
+                    if (result == 1)
+                    {
+                        HttpContext.Session.SetInt32("DoktorID", Convert.ToInt32(DoktorID));
+                        return RedirectToAction("Index", "DoktorInterface");
+                    }
+                    else
+                    {
+                        ViewBag.ErrorMessage = "Kullanıcı ID veya şifre yanlış. Lütfen tekrar deneyin.";
+                        return View();
+                    }
                 }
-                else
-                {
-                    // Eğer kullanıcı bilgileri yanlışsa veya bulunamadıysa, hata mesajı ile login sayfasına geri dön.
-                    ViewBag.ErrorMessage = "Kullanıcı ID veya şifre yanlış. Lütfen tekrar deneyin.";
-                    return View();
-                }
+            }
+            catch (Exception ex)
+            {
+                // Log the error (uncomment ex variable name and write a log.)
+                ViewBag.ErrorMessage = "Bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.";
+                return View();
             }
         }
         // GET: Doktorlar/Details/5
@@ -104,13 +112,13 @@ namespace Prolab22__3.Controllers
             }
             return View(doktor);
         }
-        // GET: Hastalar/Create
+        // GET: Doktorlar/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Hastalar/Create
+        // POST: Doktorlar/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
 
@@ -209,7 +217,6 @@ namespace Prolab22__3.Controllers
                     {
                         doktor = new Doktor
                         {
-
                             DoktorID = reader.GetInt32(0),
                             Ad = reader.GetString(1),
                             Soyad = reader.GetString(2),
@@ -226,6 +233,7 @@ namespace Prolab22__3.Controllers
             }
             return View(doktor);
         }
+        
         // POST: Doktorlar/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
@@ -241,5 +249,6 @@ namespace Prolab22__3.Controllers
             return RedirectToAction(nameof(Index));
 
         }
+        
     }
 }
