@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Prolab22__3.Models.Yonetici>
+﻿@model Prolab22__3.Models.YoneticiViewModel
 
 @{
     ViewData["Title"] = "Yönetici Listesi";
@@ -16,14 +16,14 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var yonetici in Model)
+        @foreach (var yonetici in Model.Yoneticiler)
         {
             <tr>
                 <td>@yonetici.YoneticiID</td>
                 <td>@yonetici.Ad</td>
                 <td>@yonetici.Soyad</td>
                 <td>
-                    <a asp-action="YoneticiInterface" asp-controller="Details" asp-route-id="@yonetici.YoneticiID">Detaylar</a>
+                    <a asp-controller="YoneticiInterface" asp-action="Details" asp-route-id="@yonetici.YoneticiID">Detaylar</a>
                 </td>
             </tr>
         }

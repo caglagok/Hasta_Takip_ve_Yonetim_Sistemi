@@ -2,7 +2,6 @@
 {
     public class Doktor
     {
-
         public int DoktorID { get; set; }
         public string? Ad { get; set; }
         public string? Soyad { get; set; }
