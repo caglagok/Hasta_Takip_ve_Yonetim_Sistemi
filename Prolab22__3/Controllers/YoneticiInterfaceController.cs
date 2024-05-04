@@ -22,8 +22,9 @@ namespace Prolab22__3.Controllers
         {
             YoneticiDashboardViewModel viewModel = new YoneticiDashboardViewModel
             {
-                Hastalar = GetHastalar(),
-                Doktorlar = GetDoktorlar()
+                Yoneticiler =  new List<Yonetici>(),
+                Hastalar = GetHastalar() ?? new List<Hasta>(),
+                Doktorlar = GetDoktorlar() ?? new List<Doktor>()
             };
             return View(viewModel);
         }
