@@ -1,41 +1,58 @@
-﻿<select id="uzmanlikAlani" name="UzmanlikAlani">
-    <option value="">Bir alan seçiniz...</option>
-</select>
+﻿@model Prolab22__3.Models.Randevu
+@{
+    ViewData["Title"] = "Randevu Oluştur";
+}
 
-<select id="hastaneler" name="Hastane">
-    <option value="">Önce alan seçiniz...</option>
-</select>
+<h2>Randevu Oluştur</h2>
+<h3>Hasta: @ViewBag.HastaAdi @ViewBag.HastaSoyadi</h3>
 
-<select id="doktorlar" name="DoktorID">
-    <option value="">Önce hastane seçiniz...</option>
-</select>
+<form action="/Randevular/Create" method="post">
+    @Html.AntiForgeryToken()
+   
+    <input type="hidden" name="HastaID" value="@ViewBag.HastaID" />
 
-<label for="randevuTarihi">Randevu Tarihi:</label>
-<input type="date" id="randevuTarihi" name="RandevuTarihi" required>
+    <label for="uzmanlikAlani">Uzmanlık Alanı:</label>
+    <select id="uzmanlikAlani" name="UzmanlikAlani">
+        <option value="">Bir alan seçiniz...</option>
+    </select>
 
-<label for="randevuSaati">Randevu Saati:</label>
-<input type="time" id="randevuSaati" name="RandevuSaati" required>
+    <label for="hastaneler">Hastane:</label>
+    <select id="hastaneler" name="Hastane">
+        <option value="">Önce alan seçiniz...</option>
+    </select>
 
-<button type="submit">Randevu Oluştur</button>
+    <label for="doktorlar">Doktor:</label>
+    <select id="doktorlar" name="DoktorID">
+        <option value="">Önce hastane seçiniz...</option>
+    </select>
+
+    <label for="randevuTarihi">Randevu Tarihi:</label>
+    <input type="date" id="randevuTarihi" name="RandevuTarihi" required>
+
+    <label for="randevuSaati">Randevu Saati:</label>
+    <input type="time" id="randevuSaati" name="RandevuSaati" required>
+
+    <button type="submit">Randevu Oluştur</button>
+</form>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
-    $(document).ready(function() {
+    $(document).ready(function () {
         // Uzmanlık alanlarını yükle
-        $.getJSON('/Randevular/GetUzmanlikAlanlari', function(data) {
+        $.getJSON('/Randevular/GetUzmanlikAlanlari', function (data) {
             $('#uzmanlikAlani').empty().append('<option value="">Bir alan seçiniz...</option>');
-            $.each(data, function(key, entry) {
+            $.each(data, function (key, entry) {
                 $('#uzmanlikAlani').append($('<option></option>').attr('value', entry).text(entry));
             });
         });
 
         // Uzmanlık alanı seçildiğinde hastaneleri yükle
-        $('#uzmanlikAlani').change(function() {
+        $('#uzmanlikAlani').change(function () {
             var uzmanlik = $(this).val();
             if (uzmanlik) {
-                $.getJSON('/Randevular/GetHastanelerByUzmanlik', { uzmanlik: uzmanlik }, function(data) {
+                $.getJSON('/Randevular/GetHastanelerByUzmanlik', { uzmanlik: uzmanlik }, function (data) {
                     $('#hastaneler').empty().append('<option value="">Bir hastane seçiniz...</option>');
-                    $.each(data, function(key, entry) {
+                    $.each(data, function (key, entry) {
                         $('#hastaneler').append($('<option></option>').attr('value', entry).text(entry));
                     });
                 });
@@ -45,13 +62,13 @@
         });
 
         // Hastane seçildiğinde doktorları yükle
-        $('#hastaneler').change(function() {
+        $('#hastaneler').change(function () {
             var hastane = $(this).val();
             var uzmanlik = $('#uzmanlikAlani').val();
             if (hastane && uzmanlik) {
-                $.getJSON('/Randevular/GetDoktorlarByHastaneAndUzmanlik', { hastane: hastane, uzmanlik: uzmanlik }, function(data) {
+                $.getJSON('/Randevular/GetDoktorlarByHastaneAndUzmanlik', { hastane: hastane, uzmanlik: uzmanlik }, function (data) {
                     $('#doktorlar').empty().append('<option value="">Bir doktor seçiniz...</option>');
-                    $.each(data, function(key, entry) {
+                    $.each(data, function (key, entry) {
                         $('#doktorlar').append($('<option></option>').attr('value', entry.doktorID).text(entry.doktorBilgisi));
                     });
                 });

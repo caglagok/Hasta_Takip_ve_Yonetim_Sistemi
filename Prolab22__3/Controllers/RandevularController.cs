@@ -43,8 +43,8 @@ namespace Prolab22__3.Controllers
             return View(randevular);
         }
 
-        [HttpGet]
-        public IActionResult GetUzmanlikAlanlari()
+      //  [HttpGet]
+        public JsonResult GetUzmanlikAlanlari()
         {
             List<string> uzmanlikAlanlari = new List<string>();
             using (var connection = new SqlConnection(_connectionString))
@@ -61,9 +61,8 @@ namespace Prolab22__3.Controllers
             }
             return Json(uzmanlikAlanlari);
         }
-
-        [HttpGet]
-        public IActionResult GetHastanelerByUzmanlik(string uzmanlik)
+       // [HttpGet]
+        public JsonResult GetHastanelerByUzmanlik(string uzmanlik)
         {
             List<string> hastaneler = new List<string>();
             using (var connection = new SqlConnection(_connectionString))
@@ -82,8 +81,8 @@ namespace Prolab22__3.Controllers
             return Json(hastaneler);
         }
 
-        [HttpGet]
-        public IActionResult GetDoktorlarByHastaneAndUzmanlik(string hastane, string uzmanlik)
+        //[HttpGet]
+        public JsonResult GetDoktorlarByHastaneAndUzmanlik(string hastane, string uzmanlik)
         {
             List<object> doktorlar = new List<object>();
             using (var connection = new SqlConnection(_connectionString))
@@ -140,15 +139,35 @@ namespace Prolab22__3.Controllers
         // GET: Randevular/Create
         public IActionResult Create()
         {
-            int hastaID = HttpContext.Session.GetInt32("HastaID") ?? throw new InvalidOperationException("Hasta girişi yapılmamış.");
+            int? hastaID = HttpContext.Session.GetInt32("HastaID");
+            if (!hastaID.HasValue)
+            {
+                return RedirectToAction("Login", "Hastalar");
+            }
+
             var doktorlar = GetDoktorlar();
-
             ViewBag.Doktorlar = new SelectList(doktorlar, "DoktorID", "DoktorBilgisi");
-            ViewBag.HastaID = hastaID;
+            ViewBag.HastaID = hastaID.Value;
 
-            return View();
+            // Hasta adı ve soyadını çekme
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var command = new SqlCommand("SELECT Ad, Soyad FROM Hastalar WHERE HastaID = @HastaID", connection);
+                command.Parameters.AddWithValue("@HastaID", hastaID.Value);
+                connection.Open();
+                using (var reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        ViewBag.HastaAdi = reader.GetString(0);
+                        ViewBag.HastaSoyadi = reader.GetString(1);
+                    }
+                }
+            }
+
+            return View(new Randevu { HastaID = hastaID.Value });
         }
-       
+
         private List<Doktor> GetDoktorlar()
         {
             List<Doktor> doktorlar = new List<Doktor>();
@@ -172,7 +191,7 @@ namespace Prolab22__3.Controllers
             }
             return doktorlar;
         }
-        // POST: Randevular/Create
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(Randevu randevu)
@@ -181,18 +200,32 @@ namespace Prolab22__3.Controllers
             {
                 using (var connection = new SqlConnection(_connectionString))
                 {
+                    // Önce HastaID'nin varlığını kontrol edin
+                    var checkCommand = new SqlCommand("SELECT COUNT(1) FROM Hastalar WHERE HastaID = @HastaID", connection);
+                    checkCommand.Parameters.AddWithValue("@HastaID", randevu.HastaID);
+                    connection.Open();
+                    int exists = (int)checkCommand.ExecuteScalar();
+
+                    if (exists == 0)
+                    {
+                        // HastaID mevcut değil
+                        TempData["ErrorMessage"] = "Geçersiz Hasta ID. Lütfen geçerli bir Hasta ID giriniz.";
+                        return View(randevu);
+                    }
+
+                    // HastaID mevcutsa randevuyu kaydet
                     var command = new SqlCommand("INSERT INTO Randevular (HastaID, DoktorID, RandevuTarihi, RandevuSaati) VALUES (@HastaID, @DoktorID, @RandevuTarihi, @RandevuSaati)", connection);
                     command.Parameters.AddWithValue("@HastaID", randevu.HastaID);
                     command.Parameters.AddWithValue("@DoktorID", randevu.DoktorID);
                     command.Parameters.AddWithValue("@RandevuTarihi", randevu.RandevuTarihi);
                     command.Parameters.AddWithValue("@RandevuSaati", randevu.RandevuSaati);
-                    connection.Open();
+
                     command.ExecuteNonQuery();
+                    TempData["SuccessMessage"] = "Randevu başarıyla kaydedildi.";
+                    return RedirectToAction("Index", "HastaInterface");
                 }
-                return RedirectToAction(nameof(Index));
             }
 
-            // Formdaki hataları düzeltmek üzere kullanıcıya formu tekrar göster
             return View(randevu);
         }
         // GET: Randevular/Edit/5

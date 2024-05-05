@@ -83,5 +83,36 @@ namespace Prolab22__3.Controllers
             }
             return raporlar;
         }
+        public IActionResult GetHastaRandevular(int hastaID)
+        {
+            var randevular = new List<RandevuViewModel>();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var command = new SqlCommand(
+                    @"SELECT r.RandevuTarihi, r.RandevuSaati, d.Ad, d.Soyad 
+                      FROM Randevular r
+                      INNER JOIN Doktorlar d ON r.DoktorID = d.DoktorID
+                      WHERE r.HastaID = @HastaID", connection);
+
+                command.Parameters.AddWithValue("@HastaID", hastaID);
+                connection.Open();
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var doktorAdi = reader.GetString(2); // Doktorun adını alır
+                        var doktorSoyadi = reader.GetString(3); // Doktorun soyadını alır
+
+                        randevular.Add(new RandevuViewModel
+                        {
+                            RandevuTarihi = reader.GetDateTime(0),
+                            RandevuSaati = reader.GetTimeSpan(1),
+                            DoktorAdi = doktorAdi + " " + doktorSoyadi // Adı ve soyadı birleştirerek atama yapar
+                        });
+                    }
+                }
+            }
+            return View(randevular);
+        }
     }
 }

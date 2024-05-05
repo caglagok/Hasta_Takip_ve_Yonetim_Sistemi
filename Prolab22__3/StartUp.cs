@@ -14,15 +14,18 @@ namespace Prolab22__3
         }
 
         public void ConfigureServices(IServiceCollection services)
-        {
+        {   
+            services.AddControllersWithViews();
+            services.AddDistributedMemoryCache();
+            
             services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(30);
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
-            services.AddMvc();
-            services.AddControllersWithViews();
+            //services.AddMvc();
+            
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
