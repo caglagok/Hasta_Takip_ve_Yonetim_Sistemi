@@ -89,12 +89,14 @@ namespace Prolab22__3.Controllers
         public IActionResult Details(int id)
         {
             Hasta hasta = null;
+            List<TibbiRapor> raporlar = new List<TibbiRapor>();
             using (var connection = new SqlConnection(_connectionString))
             {
-                var command = new SqlCommand("SELECT HastaID, Ad, Soyad, DogumTarihi, Cinsiyet, TelefonNumarasi, Adres, Password FROM Hastalar WHERE HastaID = @HastaID", connection);
-                command.Parameters.AddWithValue("@HastaID", id);
+                // Hasta bilgilerini çek
+                var hastaCommand = new SqlCommand("SELECT HastaID, Ad, Soyad, DogumTarihi, Cinsiyet, TelefonNumarasi, Adres FROM Hastalar WHERE HastaID = @HastaID", connection);
+                hastaCommand.Parameters.AddWithValue("@HastaID", id);
                 connection.Open();
-                using (var reader = command.ExecuteReader())
+                using (var reader = hastaCommand.ExecuteReader())
                 {
                     if (reader.Read())
                     {
@@ -106,16 +108,30 @@ namespace Prolab22__3.Controllers
                             DogumTarihi = reader.GetDateTime(3),
                             Cinsiyet = reader.GetString(4),
                             TelefonNumarasi = reader.GetString(5),
-                            Adres = reader.GetString(6),
-                            Password = reader.GetString(7)
+                            Adres = reader.GetString(6)
                         };
                     }
                 }
+
+                // Raporları çek
+                var raporCommand = new SqlCommand("SELECT RaporID, RaporTarihi, RaporIcerigi, URL FROM TibbiRaporlar WHERE HastaID = @HastaID", connection);
+                raporCommand.Parameters.AddWithValue("@HastaID", id);
+                using (var reader = raporCommand.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        raporlar.Add(new TibbiRapor
+                        {
+                            RaporID = reader.GetInt32(0),
+                            RaporTarihi = reader.GetDateTime(1),
+                            RaporIcerigi = reader.GetString(2),
+                            URL = reader.GetString(3)
+                        });
+                    }
+                }
             }
-            if (hasta == null)
-            {
-                return NotFound();
-            }
+
+            ViewBag.TibbiRaporlar = raporlar;
             return View(hasta);
         }
 

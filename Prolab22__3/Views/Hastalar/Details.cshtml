@@ -1,0 +1,45 @@
+﻿@model Prolab22__3.Models.Hasta
+
+@{
+    ViewData["Title"] = "Hasta Detayları";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="container">
+    <h3>Hasta Bilgileri</h3>
+    <table class="table">
+        <tr>
+            <th>Hasta ID</th>
+            <td>@Model.HastaID</td>
+        </tr>
+        <tr>
+            <th>Hasta Adı</th>
+            <td>@Model.Ad</td>
+        </tr>
+        <!-- Diğer hasta bilgileri -->
+    </table>
+
+    <h3>Tıbbi Raporlar</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Rapor Tarihi</th>
+                <th>Rapor İçeriği</th>
+                <th>Detaylar</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var rapor in ViewBag.TibbiRaporlar)
+            {
+                <tr>
+                    <td>@rapor.RaporTarihi.ToString("dd/MM/yyyy")</td>
+                    <td>@rapor.RaporIcerigi</td>
+                    <td>
+                        <a href="@Url.Action("Details", "TibbiRaporlar", new { id = rapor.RaporID })">Detaylar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -71,9 +71,9 @@ namespace Prolab22__3.Controllers
                         doktorlar.Add(new Doktor
                         {
                             DoktorID = reader.GetInt32(0),
-                            Ad = reader.GetString(1),
-                            Soyad = reader.GetString(2),
-                            UzmanlikAlani = reader.GetString(3)
+                            Ad = reader.IsDBNull(1) ? string.Empty : reader.GetString(1),
+                            Soyad = reader.IsDBNull(2) ? string.Empty : reader.GetString(2),
+                            UzmanlikAlani = reader.IsDBNull(3) ? string.Empty : reader.GetString(3)
                         });
                     }
                 }

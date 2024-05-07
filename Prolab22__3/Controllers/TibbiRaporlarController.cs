@@ -43,14 +43,14 @@ namespace Prolab22__3.Controllers
             }
             return View(TibbiRaporlar);
         }
-
+      
         // GET: Paporlar/Details/5
         public IActionResult Details(int id)
         {
             TibbiRapor tibbiRapor = null;
             using (var connection = new SqlConnection(_connectionString))
             {
-                var command = new SqlCommand("SELECT RaporID, HastaID, DoktorID, RaporTarihi, RaporIcerigi,URL FROM TibbiRaporlar WHERE RaporID = @RaporID", connection);
+                var command = new SqlCommand("SELECT RaporID, HastaID, DoktorID, RaporTarihi, RaporIcerigi, URL FROM TibbiRaporlar WHERE RaporID = @RaporID", connection);
                 command.Parameters.AddWithValue("@RaporID", id);
                 connection.Open();
                 using (var reader = command.ExecuteReader())

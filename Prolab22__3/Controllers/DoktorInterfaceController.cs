@@ -33,14 +33,14 @@ namespace Prolab22__3.Controllers
 
         private List<Randevu> GetDoktorunRandevulari(int doktorID)
         {
-            List<Randevu> randevular = new List<Randevu>();
+            var randevular = new List<Randevu>();
             using (var connection = new SqlConnection(_connectionString))
             {
                 var command = new SqlCommand(@"
-                    SELECT r.RandevuID, r.RandevuTarihi, r.RandevuSaati, h.Ad + ' ' + h.Soyad AS HastaAdi
-                    FROM Randevular r
-                    JOIN Hastalar h ON r.HastaID = h.HastaID
-                    WHERE r.DoktorID = @DoktorID", connection);
+            SELECT r.RandevuID, r.RandevuTarihi, r.RandevuSaati, h.Ad AS HastaAdi, h.Soyad AS HastaSoyadi, h.HastaID
+            FROM Randevular r
+            JOIN Hastalar h ON r.HastaID = h.HastaID
+            WHERE r.DoktorID = @DoktorID", connection);
 
                 command.Parameters.AddWithValue("@DoktorID", doktorID);
                 connection.Open();
@@ -52,7 +52,10 @@ namespace Prolab22__3.Controllers
                         {
                             RandevuID = reader.GetInt32(0),
                             RandevuTarihi = reader.GetDateTime(1),
-                            RandevuSaati = reader.GetTimeSpan(2)
+                            RandevuSaati = reader.GetTimeSpan(2),
+                            HastaAdi = reader.GetString(3),
+                            HastaSoyadi = reader.GetString(4),
+                            HastaID = reader.GetInt32(5)
                         });
                     }
                 }

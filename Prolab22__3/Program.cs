@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using Prolab22__3;
+using Newtonsoft.Json;
+using Prolab22__3.Models;
 
 public class Program
 {

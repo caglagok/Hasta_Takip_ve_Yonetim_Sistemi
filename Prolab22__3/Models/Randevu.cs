@@ -8,6 +8,8 @@
         public TimeSpan RandevuSaati { get; set; }
         public int HastaID { get; set; }
         public int DoktorID { get; set; }
+        public string? HastaAdi { get; set; }
+        public string? HastaSoyadi { get; set; }
         public Hasta? Hasta { get; set; }
         public Doktor? Doktor { get; set; }
         public string? DoktorAdi { get; set; }

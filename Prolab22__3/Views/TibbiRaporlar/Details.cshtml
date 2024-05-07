@@ -1,0 +1,42 @@
+﻿@model Prolab22__3.Models.TibbiRapor
+
+@{
+    ViewData["Title"] = "Tıbbi Rapor Detayları";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="container">
+    <h3>Rapor Bilgileri</h3>
+    <dl class="row">
+        <dt class="col-sm-3">Rapor ID</dt>
+        <dd class="col-sm-9">@Model.RaporID</dd>
+        <dt class="col-sm-3">Hasta ID</dt>
+        <dd class="col-sm-9">@Model.HastaID</dd>
+        <dt class="col-sm-3">Doktor ID</dt>
+        <dd class="col-sm-9">@Model.DoktorID</dd>
+        <dt class="col-sm-3">Rapor Tarihi</dt>
+        <dd class="col-sm-9">@Model.RaporTarihi.ToString("dd/MM/yyyy")</dd>
+        <dt class="col-sm-3">Rapor İçeriği</dt>
+        <dd class="col-sm-9">@Model.RaporIcerigi</dd>
+    </dl>
+
+    @if (!string.IsNullOrWhiteSpace(Model.URL))
+    {
+        bool isValidUrl = Uri.TryCreate(Model.URL, UriKind.Absolute, out var uriResult)
+        && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+        if (isValidUrl)
+        {
+            <h4>Rapor Resmi</h4>
+            <img src="@Model.URL" alt="Tıbbi Rapor Resmi" style="max-width: 100%; height: auto;">
+        }
+        else
+        {
+            <p>Rapor resmi yüklenemedi veya geçersiz URL.</p>
+        }
+    }
+    else
+    {
+        <p>Rapor resmi mevcut değil.</p>
+    }
+</div>
