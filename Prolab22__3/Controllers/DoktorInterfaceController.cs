@@ -30,6 +30,7 @@ namespace Prolab22__3.Controllers
             };
             return View(model);
         }
+  
 
         private List<Randevu> GetDoktorunRandevulari(int doktorID)
         {

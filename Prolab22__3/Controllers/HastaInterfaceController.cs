@@ -83,6 +83,8 @@ namespace Prolab22__3.Controllers
             }
             return raporlar;
         }
+       
+
         public IActionResult GetHastaRandevular(int hastaID)
         {
             var randevular = new List<RandevuViewModel>();

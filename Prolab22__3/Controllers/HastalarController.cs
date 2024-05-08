@@ -277,7 +277,7 @@ namespace Prolab22__3.Controllers
                 connection.Open();
                 command.ExecuteNonQuery();
             }
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "YoneticiInterface");
         }
     }
 }

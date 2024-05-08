@@ -202,39 +202,32 @@ namespace Prolab22__3.Controllers
             }
             return View(doktor);
         }
-        // GET: Doktorlar/Delete/5
+        // GET: 
         public IActionResult Delete(int id)
         {
-            Doktor doktor = null;
             using (var connection = new SqlConnection(_connectionString))
             {
-                var command = new SqlCommand("SELECT DoktorID, Ad, Soyad, UzmanlikAlani, CalistigiHastane, Password FROM Doktorlar WHERE DoktorID = @DoktorID", connection);
+                var command = new SqlCommand("SELECT DoktorID, Ad, Soyad FROM Doktorlar WHERE DoktorID = @DoktorID", connection);
                 command.Parameters.AddWithValue("@DoktorID", id);
                 connection.Open();
                 using (var reader = command.ExecuteReader())
                 {
                     if (reader.Read())
                     {
-                        doktor = new Doktor
+                        var doktor = new Doktor
                         {
                             DoktorID = reader.GetInt32(0),
                             Ad = reader.GetString(1),
-                            Soyad = reader.GetString(2),
-                            UzmanlikAlani = reader.GetString(3),
-                            CalistigiHastane = reader.GetString(4),
-                            Password = reader.GetString(5)
+                            Soyad = reader.GetString(2)
                         };
+                        return View(doktor);
                     }
                 }
             }
-            if (doktor == null)
-            {
-                return NotFound();
-            }
-            return View(doktor);
+            return NotFound();
         }
-        
-        // POST: Doktorlar/Delete/5
+
+        // POST: 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
@@ -246,9 +239,8 @@ namespace Prolab22__3.Controllers
                 connection.Open();
                 command.ExecuteNonQuery();
             }
-            return RedirectToAction(nameof(Index));
-
+            return RedirectToAction("Index", "YoneticiInterface");
         }
-        
+
     }
 }

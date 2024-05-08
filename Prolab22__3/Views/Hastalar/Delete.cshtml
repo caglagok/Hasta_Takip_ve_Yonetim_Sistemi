@@ -1,0 +1,28 @@
+﻿@model Prolab22__3.Models.Hasta
+
+@{
+    ViewData["Title"] = "Hasta Sil";
+}
+
+<h2>Hasta Sil</h2>
+
+<h3>Bu hastayı silmek istediğinize emin misiniz?</h3>
+<div>
+    <h4>@Model.Ad @Model.Soyad</h4>
+    <dl class="row">
+        <dt class="col-sm-2">Hasta ID</dt>
+        <dd class="col-sm-10">@Model.HastaID</dd>
+
+        <dt class="col-sm-2">Ad</dt>
+        <dd class="col-sm-10">@Model.Ad</dd>
+
+        <dt class="col-sm-2">Soyad</dt>
+        <dd class="col-sm-10">@Model.Soyad</dd>
+    </dl>
+
+    <form asp-action="Delete">
+        <input type="hidden" name="id" value="@Model.HastaID" />
+        <input type="submit" value="Sil" class="btn btn-danger" />
+        <a asp-action="Index" class="btn btn-secondary">İptal</a>
+    </form>
+</div>

@@ -24,9 +24,8 @@
                 <td>@hasta.Ad</td
                 <td>@hasta.Soyad</td>
                 <td>
-                    <a asp-controller="HastaInterface" asp-action="Details" asp-route-id="@hasta.HastaID">Detaylar</a> |
-                    <a asp-controller="HastaInterface" asp-action="Edit" asp-route-id="@hasta.HastaID">Düzenle</a> |
-                    <a asp-controller="HastaInterface" asp-action="Delete" asp-route-id="@hasta.HastaID">Sil</a>
+                    <a asp-controller="Hastalar" asp-action="Details" asp-route-id="@hasta.HastaID">Detaylar</a> |
+                    <a asp-controller="Hastalar" asp-action="Delete" asp-route-id="@hasta.HastaID">Sil</a>
                 </td>
             </tr>
         }
@@ -53,9 +52,8 @@
                 <td>@doktor.Soyad</td>
                 <td>@doktor.UzmanlikAlani</td>
                 <td>
-                    <a asp-controller="DoktorInterface" asp-action="Details" asp-route-id="@doktor.DoktorID">Detaylar</a> |
-                    <a asp-controller="DoktorInterface" asp-action="Edit" asp-route-id="@doktor.DoktorID">Düzenle</a> |
-                    <a asp-controller="DoktorInterface" asp-action="Delete" asp-route-id="@doktor.DoktorID">Sil</a>
+                    <a asp-controller="Doktorlar" asp-action="Details" asp-route-id="@doktor.DoktorID">Detaylar</a> |
+                    <a asp-controller="Doktorlar" asp-action="Delete" asp-route-id="@doktor.DoktorID">Sil</a>
                 </td>
             </tr>
         }
