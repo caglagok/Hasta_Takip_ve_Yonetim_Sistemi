@@ -110,6 +110,31 @@ namespace Prolab22__3.Controllers
             {
                 return NotFound();
             }
+            
+            // Doktorun randevularını getir
+            var randevular = new List<Randevu>();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var command = new SqlCommand("SELECT RandevuID, RandevuTarihi, RandevuSaati FROM Randevular WHERE DoktorID = @DoktorID", connection);
+                command.Parameters.AddWithValue("@DoktorID", id);
+                connection.Open();
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        randevular.Add(new Randevu
+                        {
+                            RandevuID = reader.GetInt32(0),
+                            RandevuTarihi = reader.GetDateTime(1),
+                            RandevuSaati = reader.GetTimeSpan(2)
+                        });
+                    }
+                }
+            }
+
+            // ViewBag'e randevuları ekle
+            ViewBag.Randevular = randevular;
+
             return View(doktor);
         }
         // GET: Doktorlar/Create
