@@ -7,6 +7,7 @@ using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using System.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Prolab22__3.Controllers
 {
@@ -18,16 +19,86 @@ namespace Prolab22__3.Controllers
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
-        public IActionResult Index()
+        public IActionResult Index(int page = 1)
         {
-            YoneticiDashboardViewModel viewModel = new YoneticiDashboardViewModel
+
+            int pageSize = 50; // Sayfa başına kayıt sayısı
+            List<Hasta> hastalar = new List<Hasta>();
+            List<Doktor> doktorlar = new List<Doktor>();
+
+            using (var connection = new SqlConnection(_connectionString))
             {
-                Yoneticiler =  new List<Yonetici>(),
-                Hastalar = GetHastalar() ?? new List<Hasta>(),
-                Doktorlar = GetDoktorlar() ?? new List<Doktor>()
-            };
-            return View(viewModel);
-        }
+                connection.Open();
+                // Toplam hasta sayısını hesapla
+                SqlCommand countCmd = new SqlCommand("SELECT COUNT(*) FROM Hastalar", connection);
+                int totalHastaCount = (int)countCmd.ExecuteScalar();
+
+                // Hastaları çek
+                var hastaCommand = new SqlCommand($@"
+                SELECT *
+                FROM (
+                    SELECT ROW_NUMBER() OVER (ORDER BY HastaID) AS RowNum, *
+                    FROM Hastalar
+                ) AS RowConstrainedResult
+                WHERE RowNum >= {(page - 1) * pageSize + 1}
+                AND RowNum < {page * pageSize + 1}
+                ORDER BY RowNum", connection);
+
+                
+
+                using (var reader = hastaCommand.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        hastalar.Add(new Hasta
+                        {
+                            HastaID = reader.GetInt32(reader.GetOrdinal("HastaID")),
+                            Ad = reader.GetString(reader.GetOrdinal("Ad")),
+                            Soyad = reader.GetString(reader.GetOrdinal("Soyad")),
+                            // Diğer alanlar...
+                        });
+                    }
+                }
+
+                // Doktorları çek
+                var doktorCommand = new SqlCommand($@"
+                SELECT *
+                FROM (
+                    SELECT ROW_NUMBER() OVER (ORDER BY DoktorID) AS RowNum, *
+                    FROM Doktorlar
+                ) AS RowConstrainedResult
+                WHERE RowNum >= {(page - 1) * pageSize + 1}
+                AND RowNum < {page * pageSize + 1}
+                ORDER BY RowNum", connection);
+
+                using (var reader = doktorCommand.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        doktorlar.Add(new Doktor
+                        {
+                            DoktorID = reader.GetInt32(reader.GetOrdinal("DoktorID")),
+                            Ad = reader.GetString(reader.GetOrdinal("Ad")),
+                            Soyad = reader.GetString(reader.GetOrdinal("Soyad")),
+                            UzmanlikAlani = reader.GetString(reader.GetOrdinal("UzmanlikAlani")),
+                            
+                        });
+                    }
+                }
+
+                int totalPages = (int)Math.Ceiling(totalHastaCount / (double)pageSize);
+
+                var model = new YoneticiDashboardViewModel
+                {
+                    Hastalar = hastalar,
+                    Doktorlar = doktorlar,
+                    CurrentPage = page,
+                    TotalPages = totalPages
+                };
+  
+            return View(model);
+            }
+    }
         private List<Hasta> GetHastalar()
         {
             var hastalar = new List<Hasta>(); // Hasta listesi için boş bir liste oluşturuyoruz.

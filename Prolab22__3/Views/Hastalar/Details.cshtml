@@ -4,42 +4,100 @@
     ViewData["Title"] = "Hasta Detayları";
 }
 
-<h2>@ViewData["Title"]</h2>
+<h1>Hasta Detayları</h1>
 
-<div class="container">
-    <h3>Hasta Bilgileri</h3>
-    <table class="table">
-        <tr>
-            <th>Hasta ID</th>
-            <td>@Model.HastaID</td>
-        </tr>
-        <tr>
-            <th>Hasta Adı</th>
-            <td>@Model.Ad</td>
-        </tr>
-        <!-- Diğer hasta bilgileri -->
-    </table>
+<div>
+    <h4>Hasta Bilgileri</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">Hasta ID:</dt>
+        <dd class="col-sm-10">@Model.HastaID</dd>
 
-    <h3>Tıbbi Raporlar</h3>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Rapor Tarihi</th>
-                <th>Rapor İçeriği</th>
-                <th>Detaylar</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var rapor in ViewBag.TibbiRaporlar)
-            {
+        <dt class="col-sm-2">Ad:</dt>
+        <dd class="col-sm-10">@Model.Ad</dd>
+
+        <dt class="col-sm-2">Soyad:</dt>
+        <dd class="col-sm-10">@Model.Soyad</dd>
+
+        <dt class="col-sm-2">Doğum Tarihi:</dt>
+        <dd class="col-sm-10">@((Model.DogumTarihi.HasValue) ? Model.DogumTarihi.Value.ToShortDateString() : "Bilinmiyor")</dd>
+
+
+        <dt class="col-sm-2">Cinsiyet:</dt>
+        <dd class="col-sm-10">@Model.Cinsiyet</dd>
+
+        <dt class="col-sm-2">Telefon Numarası:</dt>
+        <dd class="col-sm-10">@Model.TelefonNumarasi</dd>
+
+        <dt class="col-sm-2">Adres:</dt>
+        <dd class="col-sm-10">@Model.Adres</dd>
+    </dl>
+</div>
+
+<div>
+    <h4>Tıbbi Raporlar</h4>
+    <hr />
+    @if (ViewBag.TibbiRaporlar != null && ViewBag.TibbiRaporlar.Count > 0)
+    {
+        <table class="table">
+            <thead>
                 <tr>
-                    <td>@rapor.RaporTarihi.ToString("dd/MM/yyyy")</td>
-                    <td>@rapor.RaporIcerigi</td>
-                    <td>
-                        <a href="@Url.Action("Details", "TibbiRaporlar", new { id = rapor.RaporID })">Detaylar</a>
-                    </td>
+                    <th>Rapor ID</th>
+                    <th>Rapor Tarihi</th>
+                    <th>Rapor İçeriği</th>
+                    <th>URL</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var rapor in ViewBag.TibbiRaporlar)
+                {
+                    <tr>
+                        <td>@rapor.RaporID</td>
+                        <td>@rapor.RaporTarihi.ToShortDateString()</td>
+                        <td>@rapor.RaporIcerigi</td>
+                        <td><a href="@rapor.URL">Detaylar</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>Tıbbi rapor bulunamadı.</p>
+    }
+</div>
+
+<div>
+    <h4>Randevular</h4>
+    <hr />
+    @if (ViewBag.Randevular != null && ViewBag.Randevular.Count > 0)
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Randevu ID</th>
+                    <th>Randevu Tarihi</th>
+                    <th>Randevu Saati</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var randevu in ViewBag.Randevular)
+                {
+                    <tr>
+                        <td>@randevu.RandevuID</td>
+                        <td>@randevu.RandevuTarihi.ToShortDateString()</td>
+                        <td>@randevu.RandevuSaati</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>Randevu bulunamadı.</p>
+    }
+</div>
+
+<div>
+    <a asp-action="Index">Geri Dön</a>
 </div>

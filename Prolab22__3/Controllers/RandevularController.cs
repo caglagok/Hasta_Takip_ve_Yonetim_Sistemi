@@ -40,6 +40,10 @@ namespace Prolab22__3.Controllers
                     }
                 }
             }
+
+            // ViewBag.Randevular'a veri atama
+            ViewBag.Randevular = randevular;
+
             return View(randevular);
         }
 

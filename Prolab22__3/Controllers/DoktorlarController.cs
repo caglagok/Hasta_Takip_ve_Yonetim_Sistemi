@@ -110,6 +110,31 @@ namespace Prolab22__3.Controllers
             {
                 return NotFound();
             }
+            
+            // Doktorun randevularını getir
+            var randevular = new List<Randevu>();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var command = new SqlCommand("SELECT RandevuID, RandevuTarihi, RandevuSaati FROM Randevular WHERE DoktorID = @DoktorID", connection);
+                command.Parameters.AddWithValue("@DoktorID", id);
+                connection.Open();
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        randevular.Add(new Randevu
+                        {
+                            RandevuID = reader.GetInt32(0),
+                            RandevuTarihi = reader.GetDateTime(1),
+                            RandevuSaati = reader.GetTimeSpan(2)
+                        });
+                    }
+                }
+            }
+
+            // ViewBag'e randevuları ekle
+            ViewBag.Randevular = randevular;
+
             return View(doktor);
         }
         // GET: Doktorlar/Create
@@ -121,20 +146,21 @@ namespace Prolab22__3.Controllers
         // POST: Doktorlar/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-
-        public IActionResult Create([Bind("Ad, Soyad, UzmanlikAlani, CalistigiHastane")] Doktor doktor)
+        public IActionResult Create([Bind("Ad, Soyad, UzmanlikAlani, CalistigiHastane, Password")] Doktor doktor)
         {
             if (ModelState.IsValid)
             {
                 using (var connection = new SqlConnection(_connectionString))
                 {
-                    var command = new SqlCommand("INSERT INTO Doktorlar (Ad, Soyad, UzmanlikAlani, CalistigiHastane, Password) VALUES (@DoktorID,@Ad,@Soyad, @UzmanlikAlani, @CalistigiHastane)", connection);
+                    // DoktorID otomatik olarak oluşturulacak, bu yüzden INSERT komutuna eklemeyin
+                    var command = new SqlCommand("INSERT INTO Doktorlar (Ad, Soyad, UzmanlikAlani, CalistigiHastane, Password) VALUES (@Ad, @Soyad, @UzmanlikAlani, @CalistigiHastane, @Password)", connection);
 
                     command.Parameters.AddWithValue("@Ad", doktor.Ad);
                     command.Parameters.AddWithValue("@Soyad", doktor.Soyad);
                     command.Parameters.AddWithValue("@UzmanlikAlani", doktor.UzmanlikAlani);
                     command.Parameters.AddWithValue("@CalistigiHastane", doktor.CalistigiHastane);
                     command.Parameters.AddWithValue("@Password", doktor.Password);
+
                     connection.Open();
                     command.ExecuteNonQuery();
                 }
@@ -145,6 +171,7 @@ namespace Prolab22__3.Controllers
         //GET: Doktorlar/Edit/
         public IActionResult Edit(int id)
         {
+           
             Doktor doktor = null;
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -170,7 +197,8 @@ namespace Prolab22__3.Controllers
             if (doktor == null)
             {
                 return NotFound();
-            }
+            } 
+            TempData["PreviousUrl"] = Request.Headers["Referer"].ToString();
             return View(doktor);
         }
 
@@ -188,17 +216,29 @@ namespace Prolab22__3.Controllers
             {
                 using (var connection = new SqlConnection(_connectionString))
                 {
-                    var command = new SqlCommand("UPDATE Doktorlar SET Ad=@Ad, Soyad=@Soyad, UzmanlikAlani=@UzmanlıkAlani, CalistigiHastane=@CalistigiHastane, Password =@Password WHERE HastaID=@HastaID", connection);
+                    var command = new SqlCommand("UPDATE Doktorlar SET Ad = @Ad, Soyad = @Soyad, UzmanlikAlani = @UzmanlikAlani, CalistigiHastane = @CalistigiHastane, Password = @Password WHERE DoktorID = @DoktorID", connection);
+
                     command.Parameters.AddWithValue("@DoktorID", doktor.DoktorID);
                     command.Parameters.AddWithValue("@Ad", doktor.Ad);
                     command.Parameters.AddWithValue("@Soyad", doktor.Soyad);
                     command.Parameters.AddWithValue("@UzmanlikAlani", doktor.UzmanlikAlani);
                     command.Parameters.AddWithValue("@CalistigiHastane", doktor.CalistigiHastane);
                     command.Parameters.AddWithValue("@Password", doktor.Password);
+
                     connection.Open();
                     command.ExecuteNonQuery();
                 }
-                return RedirectToAction(nameof(Index));
+                // Başarıyla kaydedildikten sonra bir önceki sayfaya geri dön
+                string previousUrl = TempData["PreviousUrl"] as string;
+                if (!string.IsNullOrEmpty(previousUrl))
+                {
+                    return Redirect(previousUrl);
+                }
+                else
+                {
+                    // Eğer bir önceki sayfa yoksa varsayılan sayfaya yönlendir
+                    return RedirectToAction(nameof(Index));
+                }
             }
             return View(doktor);
         }
