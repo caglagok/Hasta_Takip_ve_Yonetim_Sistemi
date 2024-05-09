@@ -38,10 +38,10 @@ namespace Prolab22__3.Controllers
             using (var connection = new SqlConnection(_connectionString))
             {
                 var command = new SqlCommand(@"
-            SELECT r.RandevuID, r.RandevuTarihi, r.RandevuSaati, h.Ad AS HastaAdi, h.Soyad AS HastaSoyadi, h.HastaID
-            FROM Randevular r
-            JOIN Hastalar h ON r.HastaID = h.HastaID
-            WHERE r.DoktorID = @DoktorID", connection);
+                SELECT r.RandevuID, r.RandevuTarihi, r.RandevuSaati, h.Ad AS HastaAdi, h.Soyad AS HastaSoyadi, h.HastaID
+                FROM Randevular r
+                JOIN Hastalar h ON r.HastaID = h.HastaID
+                WHERE r.DoktorID = @DoktorID", connection);
 
                 command.Parameters.AddWithValue("@DoktorID", doktorID);
                 connection.Open();
