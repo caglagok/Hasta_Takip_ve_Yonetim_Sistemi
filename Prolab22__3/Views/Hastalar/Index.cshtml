@@ -40,4 +40,24 @@
     </tbody>
 </table>
 
+@{
+    if (ViewBag.TotalPages > 1)
+    {
+        <div>
+            Sayfa:
+            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+            {
+                if (i == ViewBag.CurrentPage)
+                {
+                    <strong>@i</strong>
+                }
+                else
+                {
+                    <a asp-action="Index" asp-route-page="@i">@i</a>
+                }
+            }
+        </div>
+    }
+}
+
 <a asp-action="Create">Yeni Hasta Ekle</a>

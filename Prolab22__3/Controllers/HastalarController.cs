@@ -157,6 +157,7 @@ namespace Prolab22__3.Controllers
         // GET: Hastalar/Create
         public IActionResult Create()
         {
+            TempData["PreviousUrl"] = Request.Headers["Referer"].ToString();
             return View();
         }
 
@@ -181,7 +182,17 @@ namespace Prolab22__3.Controllers
                     connection.Open();
                     command.ExecuteNonQuery();
                 }
-                return RedirectToAction(nameof(Index));
+                // Başarıyla kaydedildikten sonra bir önceki sayfaya geri dön
+                string previousUrl = TempData["PreviousUrl"] as string;
+                if (!string.IsNullOrEmpty(previousUrl))
+                {
+                    return Redirect(previousUrl);
+                }
+                else
+                {
+                    // Eğer bir önceki sayfa yoksa varsayılan sayfaya yönlendir
+                    return RedirectToAction(nameof(Index));
+                }
             }
             return View(hasta);
         }
