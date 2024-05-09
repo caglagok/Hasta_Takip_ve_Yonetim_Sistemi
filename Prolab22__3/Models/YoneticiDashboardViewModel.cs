@@ -7,5 +7,7 @@
         public IEnumerable<Doktor> Doktorlar { get; set; }
         public IEnumerable<Randevu> Randevular { get; set; }
         public IEnumerable<TibbiRapor> TibbiRaporlar { get; set; }
+        public int CurrentPage { get; set; }
+        public int TotalPages { get; set; }
     }
 }

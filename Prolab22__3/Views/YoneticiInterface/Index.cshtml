@@ -1,7 +1,7 @@
 ﻿@model Prolab22__3.Models.YoneticiDashboardViewModel
 
 @{
-    ViewData["Title"] = "Yönetici Listesi";
+    ViewData["Title"] = "Yönetici Dashboard";
 }
 
 <h1>@ViewData["Title"]</h1>
@@ -13,6 +13,7 @@
             <th>Hasta ID</th>
             <th>Ad</th>
             <th>Soyad</th>
+           
             <th>İşlemler</th>
         </tr>
     </thead>
@@ -21,16 +22,31 @@
         {
             <tr>
                 <td>@hasta.HastaID</td>
-                <td>@hasta.Ad</td
+                <td>@hasta.Ad</td>
                 <td>@hasta.Soyad</td>
+               
                 <td>
                     <a asp-controller="Hastalar" asp-action="Details" asp-route-id="@hasta.HastaID">Detaylar</a> |
+                    <a asp-controller="Hastalar" asp-action="Edit" asp-route-id="@hasta.HastaID">Düzenle</a> |
                     <a asp-controller="Hastalar" asp-action="Delete" asp-route-id="@hasta.HastaID">Sil</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        @for (int i = 1; i <= Model.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                <a class="page-link" asp-controller="YoneticiInterface" asp-action="Index" asp-route-page="@i">@i</a>
+            </li>
+        }
+    </ul>
+</nav>
+
+<a asp-controller="Hastalar" asp-action="Create">Yeni Hasta Ekle</a>
+
 
 <h2>Doktorlar</h2>
 <table class="table">
@@ -53,9 +69,28 @@
                 <td>@doktor.UzmanlikAlani</td>
                 <td>
                     <a asp-controller="Doktorlar" asp-action="Details" asp-route-id="@doktor.DoktorID">Detaylar</a> |
+                    <a asp-controller="Doktorlar" asp-action="Edit" asp-route-id="@doktor.DoktorID">Düzenle</a> |
                     <a asp-controller="Doktorlar" asp-action="Delete" asp-route-id="@doktor.DoktorID">Sil</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+
+@if (Model.TotalPages > 1)
+{
+    <nav>
+        <ul class="pagination">
+            @for (int i = 1; i <= Model.TotalPages; i++)
+            {
+                <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { page = i })">@i</a>
+                </li>
+            }
+        </ul>
+    </nav>
+}
+
+
+
+<a asp-controller="Doktorlar" asp-action="Create">Yeni Doktor Ekle</a>

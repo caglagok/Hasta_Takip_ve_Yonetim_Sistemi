@@ -121,20 +121,21 @@ namespace Prolab22__3.Controllers
         // POST: Doktorlar/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-
-        public IActionResult Create([Bind("Ad, Soyad, UzmanlikAlani, CalistigiHastane")] Doktor doktor)
+        public IActionResult Create([Bind("Ad, Soyad, UzmanlikAlani, CalistigiHastane, Password")] Doktor doktor)
         {
             if (ModelState.IsValid)
             {
                 using (var connection = new SqlConnection(_connectionString))
                 {
-                    var command = new SqlCommand("INSERT INTO Doktorlar (Ad, Soyad, UzmanlikAlani, CalistigiHastane, Password) VALUES (@DoktorID,@Ad,@Soyad, @UzmanlikAlani, @CalistigiHastane)", connection);
+                    // DoktorID otomatik olarak oluşturulacak, bu yüzden INSERT komutuna eklemeyin
+                    var command = new SqlCommand("INSERT INTO Doktorlar (Ad, Soyad, UzmanlikAlani, CalistigiHastane, Password) VALUES (@Ad, @Soyad, @UzmanlikAlani, @CalistigiHastane, @Password)", connection);
 
                     command.Parameters.AddWithValue("@Ad", doktor.Ad);
                     command.Parameters.AddWithValue("@Soyad", doktor.Soyad);
                     command.Parameters.AddWithValue("@UzmanlikAlani", doktor.UzmanlikAlani);
                     command.Parameters.AddWithValue("@CalistigiHastane", doktor.CalistigiHastane);
                     command.Parameters.AddWithValue("@Password", doktor.Password);
+
                     connection.Open();
                     command.ExecuteNonQuery();
                 }
@@ -188,13 +189,15 @@ namespace Prolab22__3.Controllers
             {
                 using (var connection = new SqlConnection(_connectionString))
                 {
-                    var command = new SqlCommand("UPDATE Doktorlar SET Ad=@Ad, Soyad=@Soyad, UzmanlikAlani=@UzmanlıkAlani, CalistigiHastane=@CalistigiHastane, Password =@Password WHERE HastaID=@HastaID", connection);
+                    var command = new SqlCommand("UPDATE Doktorlar SET Ad = @Ad, Soyad = @Soyad, UzmanlikAlani = @UzmanlikAlani, CalistigiHastane = @CalistigiHastane, Password = @Password WHERE DoktorID = @DoktorID", connection);
+
                     command.Parameters.AddWithValue("@DoktorID", doktor.DoktorID);
                     command.Parameters.AddWithValue("@Ad", doktor.Ad);
                     command.Parameters.AddWithValue("@Soyad", doktor.Soyad);
                     command.Parameters.AddWithValue("@UzmanlikAlani", doktor.UzmanlikAlani);
                     command.Parameters.AddWithValue("@CalistigiHastane", doktor.CalistigiHastane);
                     command.Parameters.AddWithValue("@Password", doktor.Password);
+
                     connection.Open();
                     command.ExecuteNonQuery();
                 }
