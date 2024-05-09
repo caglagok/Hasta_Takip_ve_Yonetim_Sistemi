@@ -160,16 +160,16 @@ namespace Prolab22__3.Controllers
             return View();
         }
 
-        // POST: Hastalar/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Ad,Soyad,DogumTarihi,Cinsiyet,TelefonNumarasi,Adres")] Hasta hasta)
+        public IActionResult Create([Bind("Ad, Soyad, DogumTarihi, Cinsiyet, TelefonNumarasi, Adres, Password")] Hasta hasta)
         {
             if (ModelState.IsValid)
             {
                 using (var connection = new SqlConnection(_connectionString))
                 {
-                    var command = new SqlCommand("INSERT INTO Hastalar (Ad, Soyad, DogumTarihi, Cinsiyet, TelefonNumarasi, Adres, Password) VALUES (@Ad, @Soyad, @DogumTarihi, @Cinsiyet, @TelefonNumarasi, @Adres)", connection);
+                    var command = new SqlCommand("INSERT INTO Hastalar (Ad, Soyad, DogumTarihi, Cinsiyet, TelefonNumarasi, Adres, Password) VALUES (@Ad, @Soyad, @DogumTarihi, @Cinsiyet, @TelefonNumarasi, @Adres, @Password)", connection);
+
                     command.Parameters.AddWithValue("@Ad", hasta.Ad);
                     command.Parameters.AddWithValue("@Soyad", hasta.Soyad);
                     command.Parameters.AddWithValue("@DogumTarihi", hasta.DogumTarihi);
@@ -177,6 +177,7 @@ namespace Prolab22__3.Controllers
                     command.Parameters.AddWithValue("@TelefonNumarasi", hasta.TelefonNumarasi);
                     command.Parameters.AddWithValue("@Adres", hasta.Adres);
                     command.Parameters.AddWithValue("@Password", hasta.Password);
+
                     connection.Open();
                     command.ExecuteNonQuery();
                 }
