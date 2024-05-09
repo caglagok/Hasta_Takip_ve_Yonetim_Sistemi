@@ -108,6 +108,7 @@ namespace Prolab22__3.Controllers
         public IActionResult Details(int id)
         {
             Hasta hasta = null;
+            List<Randevu> randevular = null;
             List<TibbiRapor> raporlar = new List<TibbiRapor>();
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -131,26 +132,36 @@ namespace Prolab22__3.Controllers
                         };
                     }
                 }
-
-                // Raporları çek
-                var raporCommand = new SqlCommand("SELECT RaporID, RaporTarihi, RaporIcerigi, URL FROM TibbiRaporlar WHERE HastaID = @HastaID", connection);
-                raporCommand.Parameters.AddWithValue("@HastaID", id);
-                using (var reader = raporCommand.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        raporlar.Add(new TibbiRapor
-                        {
-                            RaporID = reader.GetInt32(0),
-                            RaporTarihi = reader.GetDateTime(1),
-                            RaporIcerigi = reader.GetString(2),
-                            URL = reader.GetString(3)
-                        });
-                    }
-                }
             }
 
-            ViewBag.TibbiRaporlar = raporlar;
+                if (hasta == null)
+                {
+                    return NotFound();
+                }
+
+                // Randevuları al
+                using (var connection = new SqlConnection(_connectionString))
+                {
+                    var command = new SqlCommand("SELECT RandevuID, RandevuTarihi, RandevuSaati FROM Randevular WHERE HastaID = @HastaID", connection);
+                    command.Parameters.AddWithValue("@HastaID", id);
+                    connection.Open();
+                    using (var reader = command.ExecuteReader())
+                    {
+                        randevular = new List<Randevu>();
+                        while (reader.Read())
+                        {
+                            randevular.Add(new Randevu
+                            {
+                                RandevuID = reader.GetInt32(0),
+                                RandevuTarihi = reader.GetDateTime(1),
+                                RandevuSaati = reader.GetTimeSpan(2)
+                            });
+                        }
+                    }
+                }
+
+                ViewBag.Randevular = randevular;
+                ViewBag.TibbiRaporlar = raporlar;
             return View(hasta);
         }
 
@@ -228,6 +239,7 @@ namespace Prolab22__3.Controllers
             {
                 return NotFound();
             }
+            TempData["PreviousUrl"] = Request.Headers["Referer"].ToString();
             return View(hasta);
         }
 
@@ -257,7 +269,16 @@ namespace Prolab22__3.Controllers
                     connection.Open();
                     command.ExecuteNonQuery();
                 }
-                return RedirectToAction(nameof(Index));
+                string previousUrl = TempData["PreviousUrl"] as string;
+                if (!string.IsNullOrEmpty(previousUrl))
+                {
+                    return Redirect(previousUrl);
+                }
+                else
+                {
+                    // Eğer bir önceki sayfa yoksa varsayılan sayfaya yönlendir
+                    return RedirectToAction(nameof(Index));
+                }
             }
             return View(hasta);
         }
