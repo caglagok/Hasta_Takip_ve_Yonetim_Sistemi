@@ -34,6 +34,7 @@
             <tr>
                 <th>Rapor Tarihi</th>
                 <th>Rapor İçeriği</th>
+                <th>Detaylar</th> <!-- Yeni sütun eklendi -->
             </tr>
         </thead>
         <tbody>
@@ -42,6 +43,8 @@
                 <tr>
                     <td>@rapor.RaporTarihi.ToString("dd/MM/yyyy")</td>
                     <td>@rapor.RaporIcerigi</td>
+                    <!-- Detaylar için bağlantı eklendi -->
+                    <td><a href="@Url.Action("Details", "TibbiRaporlar", new { id = rapor.RaporID })">Detaylar</a></td>
                 </tr>
             }
         </tbody>
@@ -49,5 +52,9 @@
 
     <div>
        <a class="btn btn-primary" href="@Url.Action("Create", "Randevular")">Yeni Randevu Oluştur</a>
+    </div>
+    <br>
+    <div>
+        <a class="btn btn-primary" href="@Url.Action("Create", "TibbiRaporlar")">Tıbbi Rapor Ekleyin</a>
     </div>
 </div>
