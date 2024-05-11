@@ -102,7 +102,7 @@ namespace Prolab22__3.Controllers
                 ViewBag.ErrorMessage = "Bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.";
                 return View();
             }
-        } 
+        }
 
         // GET: Hastalar/Details/5
         public IActionResult Details(int id)
@@ -134,36 +134,61 @@ namespace Prolab22__3.Controllers
                 }
             }
 
-                if (hasta == null)
-                {
-                    return NotFound();
-                }
+            if (hasta == null)
+            {
+                return NotFound();
+            }
 
-                // Randevuları al
-                using (var connection = new SqlConnection(_connectionString))
+            // Randevuları al
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var command = new SqlCommand("SELECT RandevuID, RandevuTarihi, RandevuSaati FROM Randevular WHERE HastaID = @HastaID", connection);
+                command.Parameters.AddWithValue("@HastaID", id);
+                connection.Open();
+                using (var reader = command.ExecuteReader())
                 {
-                    var command = new SqlCommand("SELECT RandevuID, RandevuTarihi, RandevuSaati FROM Randevular WHERE HastaID = @HastaID", connection);
-                    command.Parameters.AddWithValue("@HastaID", id);
-                    connection.Open();
-                    using (var reader = command.ExecuteReader())
+                    randevular = new List<Randevu>();
+                    while (reader.Read())
                     {
-                        randevular = new List<Randevu>();
-                        while (reader.Read())
+                        randevular.Add(new Randevu
                         {
-                            randevular.Add(new Randevu
-                            {
-                                RandevuID = reader.GetInt32(0),
-                                RandevuTarihi = reader.GetDateTime(1),
-                                RandevuSaati = reader.GetTimeSpan(2)
-                            });
-                        }
+                            RandevuID = reader.GetInt32(0),
+                            RandevuTarihi = reader.GetDateTime(1),
+                            RandevuSaati = reader.GetTimeSpan(2)
+                        });
                     }
                 }
+            }
 
-                ViewBag.Randevular = randevular;
-                ViewBag.TibbiRaporlar = raporlar;
+            // Tıbbi Raporları Al
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var command = new SqlCommand("SELECT RaporID, HastaID, DoktorID, RaporTarihi, RaporIcerigi,URL FROM TibbiRaporlar WHERE HastaID = @HastaID", connection);
+                command.Parameters.AddWithValue("@HastaID", id);
+                connection.Open();
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        raporlar.Add(new TibbiRapor
+                        {
+                            RaporID = reader.GetInt32(0),
+                            HastaID = reader.GetInt32(1),
+                            DoktorID = reader.GetInt32(2),
+                            RaporTarihi = reader.GetDateTime(3),
+                            RaporIcerigi = reader.GetString(4),
+                            URL = reader.GetString(5)
+                        });
+                    }
+                }
+            }
+
+            ViewBag.Randevular = randevular;
+            ViewBag.TibbiRaporlar = raporlar;
+
             return View(hasta);
         }
+
 
         // GET: Hastalar/Create
         public IActionResult Create()

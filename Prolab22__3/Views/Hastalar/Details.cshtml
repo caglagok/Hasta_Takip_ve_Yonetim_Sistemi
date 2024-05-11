@@ -22,7 +22,6 @@
         <dt class="col-sm-2">Doğum Tarihi:</dt>
         <dd class="col-sm-10">@((Model.DogumTarihi.HasValue) ? Model.DogumTarihi.Value.ToShortDateString() : "Bilinmiyor")</dd>
 
-
         <dt class="col-sm-2">Cinsiyet:</dt>
         <dd class="col-sm-10">@Model.Cinsiyet</dd>
 
@@ -37,6 +36,9 @@
 <div>
     <h4>Tıbbi Raporlar</h4>
     <hr />
+    <p>
+        <a asp-action="Create" asp-controller="TibbiRaporlar" asp-route-hastaId="@Model.HastaID" class="btn btn-primary">Tıbbi Rapor Ekle</a>
+    </p>
     @if (ViewBag.TibbiRaporlar != null && ViewBag.TibbiRaporlar.Count > 0)
     {
         <table class="table">
@@ -78,6 +80,7 @@
                     <th>Randevu ID</th>
                     <th>Randevu Tarihi</th>
                     <th>Randevu Saati</th>
+                    <th>İşlemler</th>
                 </tr>
             </thead>
             <tbody>
@@ -87,6 +90,12 @@
                         <td>@randevu.RandevuID</td>
                         <td>@randevu.RandevuTarihi.ToShortDateString()</td>
                         <td>@randevu.RandevuSaati</td>
+                        <td>
+                            <form asp-action="DeleteRandevu" method="post">
+                                <input type="hidden" name="randevuId" value="@randevu.RandevuID" />
+                                <input type="submit" value="Sil" class="btn btn-danger" onclick="return confirm('Randevuyu silmek istediğinize emin misiniz?');" />
+                            </form>
+                        </td>
                     </tr>
                 }
             </tbody>
