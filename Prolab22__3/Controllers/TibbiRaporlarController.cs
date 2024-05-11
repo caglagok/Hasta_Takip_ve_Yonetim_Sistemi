@@ -75,24 +75,30 @@ namespace Prolab22__3.Controllers
             }
             return View(tibbiRapor);
         }
-        // GET: raporlar/Create
+        // GET: TibbiRaporlar/Create
         public IActionResult Create()
         {
-            return View();
-        }
+            // Oturumda saklanan HastaID değerini al, eğer yoksa varsayılan olarak 1 kullan
+            int hastaID = HttpContext.Session.GetInt32("HastaID") ?? 1;
 
-        // POST: raporlar/Create
+            // Model oluştururken, HastaID değerini set ediyoruz
+            var tibbiRapor = new TibbiRapor { HastaID = hastaID };
+
+            // Create view'ını, oluşturduğumuz model ile birlikte döndürüyoruz
+            return View(tibbiRapor);
+        }
+        // POST: TibbiRaporlar/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("RaporID, HastaID, DoktorID, RaporTarihi, RaporIcerigi, URL")]TibbiRapor tibbiRapor)
+        public IActionResult Create([Bind("HastaID, DoktorID, RaporTarihi, RaporIcerigi, URL")] TibbiRapor tibbiRapor)
         {
             if (ModelState.IsValid)
             {
                 using (var connection = new SqlConnection(_connectionString))
                 {
-                    var command = new SqlCommand("INSERT INTO Raporlar (HastaID, DoktorID, RaporTarihi, RaporIcerigi, URL) VALUES (@HastaID, @DoktorID, @RaporTarihi, @RaporIcerigi, @URL)", connection);
+                    var command = new SqlCommand("INSERT INTO TibbiRaporlar (HastaID, DoktorID, RaporTarihi, RaporIcerigi, URL) VALUES (@HastaID, @DoktorID, @RaporTarihi, @RaporIcerigi, @URL)", connection);
                     command.Parameters.AddWithValue("@HastaID", tibbiRapor.HastaID);
-                    command.Parameters.AddWithValue("@DoktorID",tibbiRapor.DoktorID);
+                    command.Parameters.AddWithValue("@DoktorID", tibbiRapor.DoktorID);
                     command.Parameters.AddWithValue("@RaporTarihi", tibbiRapor.RaporTarihi);
                     command.Parameters.AddWithValue("@RaporIcerigi", tibbiRapor.RaporIcerigi);
                     command.Parameters.AddWithValue("@URL", tibbiRapor.URL);
@@ -100,11 +106,12 @@ namespace Prolab22__3.Controllers
                     connection.Open();
                     command.ExecuteNonQuery();
                 }
-                return RedirectToAction(nameof(Index));
+
+                // Tıbbi rapor başarıyla eklendikten sonra, hasta detayları sayfasına geri dön
+                return RedirectToAction("Details", "Hastalar", new { id = tibbiRapor.HastaID });
             }
             return View(tibbiRapor);
         }
-
         // GET: Hastalar/Edit/5
         public IActionResult Edit(int id)
         {
