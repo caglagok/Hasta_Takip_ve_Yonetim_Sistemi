@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Tıbbi Rapor Detayları";
+    // URL'nin geçerliliğini kontrol eden kod buraya taşındı
+    bool isValidUrl = !string.IsNullOrWhiteSpace(Model.URL) && Uri.TryCreate(Model.URL, UriKind.Absolute, out var uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
 }
 
 <h2>@ViewData["Title"]</h2>
@@ -9,34 +11,35 @@
 <div class="container">
     <h3>Rapor Bilgileri</h3>
     <dl class="row">
-        <dt class="col-sm-3">Rapor ID</dt>
+        <dt class="col-sm-3">Rapor ID:</dt>
         <dd class="col-sm-9">@Model.RaporID</dd>
-        <dt class="col-sm-3">Hasta ID</dt>
+        <dt class="col-sm-3">Hasta ID:</dt>
         <dd class="col-sm-9">@Model.HastaID</dd>
-        <dt class="col-sm-3">Doktor ID</dt>
+        <dt class="col-sm-3">Doktor ID:</dt>
         <dd class="col-sm-9">@Model.DoktorID</dd>
-        <dt class="col-sm-3">Rapor Tarihi</dt>
+        <dt class="col-sm-3">Rapor Tarihi:</dt>
         <dd class="col-sm-9">@Model.RaporTarihi.ToString("dd/MM/yyyy")</dd>
-        <dt class="col-sm-3">Rapor İçeriği</dt>
+        <dt class="col-sm-3">Rapor İçeriği:</dt>
         <dd class="col-sm-9">@Model.RaporIcerigi</dd>
     </dl>
 
-    @if (!string.IsNullOrWhiteSpace(Model.URL))
+    @if (isValidUrl)
     {
-        bool isValidUrl = Uri.TryCreate(Model.URL, UriKind.Absolute, out var uriResult)
-        && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
-        if (isValidUrl)
-        {
-            <h4>Rapor Resmi</h4>
-            <img src="@Model.URL" alt="Tıbbi Rapor Resmi" style="max-width: 100%; height: auto;">
-        }
-        else
-        {
-            <p>Rapor resmi yüklenemedi veya geçersiz URL.</p>
-        }
+        <h4>Rapor Resmi</h4>
+        <img src="@Model.URL" alt="Tıbbi Rapor Resmi" style="max-width: 100%; height: auto;">
+        <a asp-controller="TibbiRaporlar" asp-action="Download" asp-route-id="@Model.RaporID" class="btn btn-success">Raporu İndir</a>
     }
     else
     {
-        <p>Rapor resmi mevcut değil.</p>
+        <p>Rapor resmi yüklenemedi veya geçersiz URL.</p>
     }
+
+    <div>
+        <a asp-controller="TibbiRaporlar" asp-action="Index" class="btn btn-primary">Geri Dön</a>
+        <a asp-controller="TibbiRaporlar" asp-action="Edit" asp-route-id="@Model.RaporID" class="btn btn-secondary">Düzenle</a>
+        @if (isValidUrl)
+        {
+            <a href="@Model.URL" target="_blank" class="btn btn-success">Detaylı GÖRÜNTÜLE</a>
+        }
+    </div>
 </div>
