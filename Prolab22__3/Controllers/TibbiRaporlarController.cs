@@ -5,10 +5,16 @@ using System.Collections.Generic;
 using Microsoft.Data.SqlClient;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+using System.IO;
+using Microsoft.AspNetCore.StaticFiles;
+using DinkToPdf.Contracts;
+using DinkToPdf;
 
 namespace Prolab22__3.Controllers
 {
-    public class TibbiRaporlarController:Controller
+    public class TibbiRaporlarController : Controller
     {
         private readonly string _connectionString; // Connection String'i doğru şekilde ayarlayın
 
@@ -43,7 +49,7 @@ namespace Prolab22__3.Controllers
             }
             return View(TibbiRaporlar);
         }
-      
+
         // GET: Paporlar/Details/5
         public IActionResult Details(int id)
         {
@@ -112,8 +118,10 @@ namespace Prolab22__3.Controllers
             }
             return View(tibbiRapor);
         }
-        // GET: Hastalar/Edit/5
-        public IActionResult Edit(int id)
+
+    
+    // GET: Hastalar/Edit/5
+    public IActionResult Edit(int id)
         {
             TibbiRapor tibbiRapor = null;
             using (var connection = new SqlConnection(_connectionString))
@@ -205,6 +213,64 @@ namespace Prolab22__3.Controllers
             }
             return View(tibbiRapor);
         }
+        public async Task<IActionResult> Download(int id)
+        {
+
+            TibbiRapor tibbiRapor = null;
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var command = new SqlCommand("SELECT RaporID, URL FROM TibbiRaporlar WHERE RaporID = @RaporID", connection);
+                command.Parameters.AddWithValue("@RaporID", id);
+                connection.Open();
+                using (var reader = command.ExecuteReader())
+                {
+                    if (reader.Read())
+                    {
+                        tibbiRapor = new TibbiRapor
+                        {
+                            RaporID = reader.GetInt32(0),
+                            URL = reader.IsDBNull(1) ? null : reader.GetString(1)
+                        };
+                    }
+                }
+            }
+
+            if (tibbiRapor == null || string.IsNullOrEmpty(tibbiRapor.URL))
+            {
+                return NotFound("Rapor bulunamadı veya geçerli bir URL içermiyor.");
+            }
+
+
+            // Dosya URL'sini doğrulayın ve indirme işlemi için kullanın
+            var uri = new Uri(tibbiRapor.URL);
+            if (uri.IsAbsoluteUri && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
+            {
+                try
+                {
+                    var httpClient = new HttpClient();
+                    var response = await httpClient.GetAsync(uri);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var fileStream = await response.Content.ReadAsStreamAsync();
+                        var contentType = "application/octet-stream";
+                        var fileName = Path.GetFileName(uri.LocalPath);
+                        return File(fileStream, contentType, fileName);
+                    }
+                    return NotFound("Dosya erişilebilir değil.");
+                }
+                catch
+                {
+                    return BadRequest("Dosyayı indirirken bir hata oluştu.");
+                }
+            }
+            else
+            {
+                return NotFound("Rapor URL'si geçersiz veya erişilemez.");
+            }
+        }
+
+
+
 
         // POST: Hastalar/Delete/5
         [HttpPost, ActionName("Delete")]
