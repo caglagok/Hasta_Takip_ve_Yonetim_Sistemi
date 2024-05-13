@@ -43,3 +43,22 @@
         }
     </div>
 </div>
+<script>
+    $(document).ready(function () {
+        $('#detayliGoruntule').click(function () {
+            $.ajax({
+                url: '@Model.URL',
+                type: 'GET',
+                success: function (response) {
+                    // Başarılı yanıt alındığında yapılacak işlemler
+                    // Örneğin, response içeriğini bir modaldan göstermek gibi
+                    console.log(response);
+                },
+                error: function (xhr, status, error) {
+                    
+                    console.error(xhr.responseText);
+                }
+            });
+        });
+    });
+</script>
