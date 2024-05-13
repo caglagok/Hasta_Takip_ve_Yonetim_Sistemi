@@ -1,0 +1,49 @@
+﻿@model Prolab22__3.Models.TibbiRapor
+
+@{
+    ViewData["Title"] = "Rapor Düzenle";
+}
+
+<h1>Rapor Düzenle</h1>
+
+<h4>Tıbbi Rapor</h4>
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        <form asp-action="Edit" asp-controller="TibbiRaporlar" asp-route-id="@Model.RaporID" method="post">
+            <input type="hidden" asp-for="RaporID" />
+            <div class="form-group">
+                <label asp-for="HastaID" class="control-label"></label>
+                <input asp-for="HastaID" class="form-control" />
+                <span asp-validation-for="HastaID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DoktorID" class="control-label"></label>
+                <input asp-for="DoktorID" class="form-control" />
+                <span asp-validation-for="DoktorID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RaporTarihi" class="control-label"></label>
+                <input asp-for="RaporTarihi" class="form-control" />
+                <span asp-validation-for="RaporTarihi" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RaporIcerigi" class="control-label"></label>
+                <textarea asp-for="RaporIcerigi" class="form-control"></textarea>
+                <span asp-validation-for="RaporIcerigi" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="URL" class="control-label"></label>
+                <input asp-for="URL" class="form-control" />
+                <span asp-validation-for="URL" the="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Kaydet" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index" asp-controller="HastaInterface">Geri Dön</a>
+</div>
