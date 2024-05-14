@@ -5,7 +5,20 @@
 }
 
 <h1>@ViewData["Title"]</h1>
-
+<div class="container">
+    @if (!string.IsNullOrEmpty(ViewBag.SuccessMessage))
+    {
+        <div class="alert alert-success" role="alert">
+            @ViewBag.SuccessMessage
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(ViewBag.ErrorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            @ViewBag.ErrorMessage
+        </div>
+    }
+</div>
 <h2>Hastalar</h2>
 <table class="table">
     <thead>
