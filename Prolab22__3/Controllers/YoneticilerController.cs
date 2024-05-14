@@ -46,7 +46,7 @@ namespace Prolab22__3.Controllers
                 Yoneticiler = yoneticiler
             };
             return View(viewModel);
-           // return View(yoneticiler);
+            // return View(yoneticiler);
         }
 
 
@@ -63,34 +63,35 @@ namespace Prolab22__3.Controllers
             try
             {
                 using (var connection = new SqlConnection(_connectionString))
-            using (var command = new SqlCommand("SELECT COUNT(1) FROM Yoneticiler WHERE YoneticiID = @YoneticiID AND Password = @Password ", connection))
-            {
-                command.Parameters.AddWithValue("@YoneticiID", YoneticiID);
-                command.Parameters.AddWithValue("@Password", password);
-                connection.Open();
-                int result = Convert.ToInt32(command.ExecuteScalar());
+                using (var command = new SqlCommand("SELECT COUNT(1) FROM Yoneticiler WHERE YoneticiID = @YoneticiID AND Password = @Password ", connection))
+                {
+                    command.Parameters.AddWithValue("@YoneticiID", YoneticiID);
+                    command.Parameters.AddWithValue("@Password", password);
+                    connection.Open();
+                    int result = Convert.ToInt32(command.ExecuteScalar());
 
-                if (result == 1)
-                {
-                    return RedirectToAction("Index", "YoneticiInterface");
-                }
-                else
-                {
-                    // Eğer kullanıcı bilgileri yanlışsa veya bulunamadıysa, hata mesajı ile login sayfasına geri dön.
-                    ViewBag.ErrorMessage = "Kullanıcı ID veya şifre yanlış. Lütfen tekrar deneyin.";
-                    return View();
+                    if (result == 1)
+                    {
+                        HttpContext.Session.SetString("Role", "Yonetici");
+                        return RedirectToAction("Index", "YoneticiInterface");
+                    }
+                    else
+                    {
+                        // Eğer kullanıcı bilgileri yanlışsa veya bulunamadıysa, hata mesajı ile login sayfasına geri dön.
+                        ViewBag.ErrorMessage = "Kullanıcı ID veya şifre yanlış. Lütfen tekrar deneyin.";
+                        return View();
+                    }
                 }
             }
-            }
-         catch (Exception ex)
+            catch (Exception ex)
             {
                 // Log the error (uncomment ex variable name and write a log.)
                 ViewBag.ErrorMessage = "Bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.";
                 return View();
-            }  
+            }
         }
 
-    private List<Hasta> GetHastalar()
+        private List<Hasta> GetHastalar()
         {
             var hastalar = new List<Hasta>();
             using (var connection = new SqlConnection(_connectionString))
@@ -144,3 +145,4 @@ namespace Prolab22__3.Controllers
         }
     }
 }
+

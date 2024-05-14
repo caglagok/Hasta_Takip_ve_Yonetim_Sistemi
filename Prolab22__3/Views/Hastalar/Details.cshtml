@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Hasta Detayları";
+    string userRole = ViewBag.UserRole as string;
 }
 
 <h1>Hasta Detayları</h1>
@@ -37,7 +38,14 @@
     <h4>Tıbbi Raporlar</h4>
     <hr />
     <p>
-        <a asp-action="Create" asp-controller="TibbiRaporlar" asp-route-hastaId="@Model.HastaID" class="btn btn-primary">Tıbbi Rapor Ekle</a>
+        @if (userRole == "Doktor")
+        {
+            <a asp-action="Create" asp-controller="TibbiRaporlar" asp-route-hastaId="@Model.HastaID" class="btn btn-primary">Tıbbi Rapor Ekle</a>
+        }
+        else
+        {
+            <a asp-action="Create" asp-controller="TibbiRaporlar" asp-route-hastaId="@Model.HastaID" class="btn btn-primary">Tıbbi Rapor Ekle</a>
+        }
     </p>
     @if (ViewBag.TibbiRaporlar != null && ViewBag.TibbiRaporlar.Count > 0)
     {
@@ -92,10 +100,13 @@
                         <td>@randevu.RandevuTarihi.ToShortDateString()</td>
                         <td>@randevu.RandevuSaati</td>
                         <td>
-                            <form asp-action="DeleteRandevu" method="post">
-                                <input type="hidden" name="randevuId" value="@randevu.RandevuID" />
-                                <input type="submit" value="Sil" class="btn btn-danger" onclick="return confirm('Randevuyu silmek istediğinize emin misiniz?');" />
-                            </form>
+                            @if (userRole != "Doktor")
+                            {
+                                <form asp-action="DeleteRandevu" method="post">
+                                    <input type="hidden" name="randevuId" value="@randevu.RandevuID" />
+                                    <input type="submit" value="Sil" class="btn btn-danger" onclick="return confirm('Randevuyu silmek istediğinize emin misiniz?');" />
+                                </form>
+                            }
                         </td>
                     </tr>
                 }

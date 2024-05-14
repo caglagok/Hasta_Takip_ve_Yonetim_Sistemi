@@ -65,8 +65,8 @@ namespace Prolab22__3.Controllers
             }
             return View(hastalar);
         }
-            // GET: Hastalar/LoginHasta
-            public IActionResult LoginHasta()
+        // GET: Hastalar/LoginHasta
+        public IActionResult LoginHasta()
         {
             return View();
         }
@@ -87,6 +87,7 @@ namespace Prolab22__3.Controllers
                     if (result == 1)
                     {
                         HttpContext.Session.SetInt32("HastaID", Convert.ToInt32(HastaID));
+                        HttpContext.Session.SetString("Role", "Hasta");  // Rolü oturuma kaydedin
                         return RedirectToAction("Index", "HastaInterface");
                     }
                     else
@@ -107,6 +108,18 @@ namespace Prolab22__3.Controllers
         // GET: Hastalar/Details/5
         public IActionResult Details(int id)
         {
+            string role = HttpContext.Session.GetString("Role");
+            ViewBag.UserRole = role;
+            if (role == "Hasta" && HttpContext.Session.GetInt32("HastaID") != id)
+            {
+                return Unauthorized("Yalnızca kendi bilgilerinizi görüntüleyebilirsiniz.");
+            }
+            // int? doktorID = HttpContext.Session.GetInt32("DoktorID");
+            if (role == "Doktor")
+            {
+
+                int? doktorID = HttpContext.Session.GetInt32("DoktorID");
+            }
             Hasta hasta = null;
             List<Randevu> randevular = null;
             List<TibbiRapor> raporlar = new List<TibbiRapor>();

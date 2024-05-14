@@ -65,6 +65,7 @@ namespace Prolab22__3.Controllers
                     if (result == 1)
                     {
                         HttpContext.Session.SetInt32("DoktorID", Convert.ToInt32(DoktorID));
+                        HttpContext.Session.SetString("Role", "Doktor");  // Rolü oturuma kaydedin
                         return RedirectToAction("Index", "DoktorInterface");
                     }
                     else
@@ -110,7 +111,7 @@ namespace Prolab22__3.Controllers
             {
                 return NotFound();
             }
-            
+
             // Doktorun randevularını getir
             var randevular = new List<Randevu>();
             using (var connection = new SqlConnection(_connectionString))
@@ -171,7 +172,7 @@ namespace Prolab22__3.Controllers
         //GET: Doktorlar/Edit/
         public IActionResult Edit(int id)
         {
-           
+
             Doktor doktor = null;
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -197,7 +198,7 @@ namespace Prolab22__3.Controllers
             if (doktor == null)
             {
                 return NotFound();
-            } 
+            }
             TempData["PreviousUrl"] = Request.Headers["Referer"].ToString();
             return View(doktor);
         }

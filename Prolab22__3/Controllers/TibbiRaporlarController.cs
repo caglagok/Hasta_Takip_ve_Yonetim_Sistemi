@@ -6,11 +6,6 @@ using Microsoft.Data.SqlClient;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
 using System.Data;
-using System.Data.SqlClient;
-using System.IO;
-using Microsoft.AspNetCore.StaticFiles;
-using DinkToPdf.Contracts;
-using DinkToPdf;
 
 namespace Prolab22__3.Controllers
 {
@@ -23,7 +18,6 @@ namespace Prolab22__3.Controllers
             _connectionString = configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string is not configured.");
         }
 
-        // Tıbbi raporların listesini getir
         public IActionResult Index()
         {
             var TibbiRaporlar = new List<TibbiRapor>();
@@ -50,7 +44,6 @@ namespace Prolab22__3.Controllers
             return View(TibbiRaporlar);
         }
 
-        // GET: Paporlar/Details/5
         public IActionResult Details(int id)
         {
             TibbiRapor tibbiRapor = null;
@@ -81,18 +74,40 @@ namespace Prolab22__3.Controllers
             }
             return View(tibbiRapor);
         }
+
         // GET: TibbiRaporlar/Create
-        public IActionResult Create()
+        public IActionResult Create(int? hastaId)
         {
-            // Oturumda saklanan HastaID değerini al, eğer yoksa varsayılan olarak 1 kullan
-            int hastaID = HttpContext.Session.GetInt32("HastaID") ?? 1;
+            var userRole = HttpContext.Session.GetString("Role");
+            var tibbiRapor = new TibbiRapor { HastaID = hastaId ?? 0 };
 
-            // Model oluştururken, HastaID değerini set ediyoruz
-            var tibbiRapor = new TibbiRapor { HastaID = hastaID };
-
-            // Create view'ını, oluşturduğumuz model ile birlikte döndürüyoruz
+            if (userRole == "Doktor")
+            {
+                int? doktorID = HttpContext.Session.GetInt32("DoktorID");
+                if (doktorID.HasValue)
+                {
+                    tibbiRapor.DoktorID = doktorID.Value;
+                    ViewBag.DoktorID = doktorID.Value;
+                }
+                ViewBag.UserRole = "Doktor";
+            }
+            else if (userRole == "Hasta")
+            {
+                hastaId = HttpContext.Session.GetInt32("HastaID");
+                if (hastaId.HasValue)
+                {
+                    tibbiRapor.HastaID = hastaId.Value;
+                    ViewBag.HastaID = hastaId.Value;
+                }
+                ViewBag.UserRole = "Hasta";
+            }
+            else
+            {
+                ViewBag.UserRole = "Yönetici";
+            }
             return View(tibbiRapor);
         }
+
         // POST: TibbiRaporlar/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -104,7 +119,7 @@ namespace Prolab22__3.Controllers
                 {
                     var command = new SqlCommand("INSERT INTO TibbiRaporlar (HastaID, DoktorID, RaporTarihi, RaporIcerigi, URL) VALUES (@HastaID, @DoktorID, @RaporTarihi, @RaporIcerigi, @URL)", connection);
                     command.Parameters.AddWithValue("@HastaID", tibbiRapor.HastaID);
-                    command.Parameters.AddWithValue("@DoktorID", tibbiRapor.DoktorID);
+                    command.Parameters.AddWithValue("@DoktorID", tibbiRapor.DoktorID.HasValue ? (object)tibbiRapor.DoktorID : DBNull.Value);
                     command.Parameters.AddWithValue("@RaporTarihi", tibbiRapor.RaporTarihi);
                     command.Parameters.AddWithValue("@RaporIcerigi", tibbiRapor.RaporIcerigi);
                     command.Parameters.AddWithValue("@URL", tibbiRapor.URL);
@@ -119,14 +134,12 @@ namespace Prolab22__3.Controllers
             return View(tibbiRapor);
         }
 
-    
-    // GET: Hastalar/Edit/5
-    public IActionResult Edit(int id)
+        public IActionResult Edit(int id)
         {
             TibbiRapor tibbiRapor = null;
             using (var connection = new SqlConnection(_connectionString))
             {
-                var command = new SqlCommand("SELECT RaporID, HastaID, DoktorID, RaporTarihi, RaporIcerigi,URL  FROM TibbiRaporlar WHERE RaporID = @RaporID", connection);
+                var command = new SqlCommand("SELECT RaporID, HastaID, DoktorID, RaporTarihi, RaporIcerigi, URL FROM TibbiRaporlar WHERE RaporID = @RaporID", connection);
                 command.Parameters.AddWithValue("@RaporID", id);
                 connection.Open();
                 using (var reader = command.ExecuteReader())
@@ -152,11 +165,9 @@ namespace Prolab22__3.Controllers
             return View(tibbiRapor);
         }
 
-
-        // POST: raporlar/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, [Bind("RaporID, HastaID, DoktorID, RaporTarihi, RaporIcerigi,URL")] TibbiRapor tibbiRapor)
+        public IActionResult Edit(int id, [Bind("RaporID, HastaID, DoktorID, RaporTarihi, RaporIcerigi, URL")] TibbiRapor tibbiRapor)
         {
             if (id != tibbiRapor.RaporID)
             {
@@ -166,14 +177,13 @@ namespace Prolab22__3.Controllers
             {
                 using (var connection = new SqlConnection(_connectionString))
                 {
-                    var command = new SqlCommand("UPDATE TibbiRaporlar SET HastaID = @HastaID, DoktorID = @DoktorID, RaporTarihi = @RaporTarihi, RaporIcerigi=@RaporIcerigi, URL=@URL WHERE RaporID = @RaporID", connection);
+                    var command = new SqlCommand("UPDATE TibbiRaporlar SET HastaID = @HastaID, DoktorID = @DoktorID, RaporTarihi = @RaporTarihi, RaporIcerigi = @RaporIcerigi, URL = @URL WHERE RaporID = @RaporID", connection);
                     command.Parameters.AddWithValue("@RaporID", tibbiRapor.RaporID);
                     command.Parameters.AddWithValue("@HastaID", tibbiRapor.HastaID);
-                    command.Parameters.AddWithValue("@DoktorID", tibbiRapor.DoktorID);
+                    command.Parameters.AddWithValue("@DoktorID", tibbiRapor.DoktorID.HasValue ? (object)tibbiRapor.DoktorID : DBNull.Value);
                     command.Parameters.AddWithValue("@RaporTarihi", tibbiRapor.RaporTarihi);
                     command.Parameters.AddWithValue("@RaporIcerigi", tibbiRapor.RaporIcerigi);
                     command.Parameters.AddWithValue("@URL", tibbiRapor.URL);
-
 
                     connection.Open();
                     command.ExecuteNonQuery();
@@ -182,13 +192,13 @@ namespace Prolab22__3.Controllers
             }
             return View(tibbiRapor);
         }
-        // GET: Hastalar/Delete/5
+
         public IActionResult Delete(int id)
         {
             TibbiRapor tibbiRapor = null;
             using (var connection = new SqlConnection(_connectionString))
             {
-                var command = new SqlCommand("SELECT RaporID, HastaID, DoktorID, RaporTarihi, RaporIcerigi,URL FROM TibbiRaporlar WHERE RaporID = @RaporID", connection);
+                var command = new SqlCommand("SELECT RaporID, HastaID, DoktorID, RaporTarihi, RaporIcerigi, URL FROM TibbiRaporlar WHERE RaporID = @RaporID", connection);
                 command.Parameters.AddWithValue("@RaporID", id);
                 connection.Open();
                 using (var reader = command.ExecuteReader())
@@ -213,9 +223,9 @@ namespace Prolab22__3.Controllers
             }
             return View(tibbiRapor);
         }
+
         public async Task<IActionResult> Download(int id)
         {
-
             TibbiRapor tibbiRapor = null;
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -240,8 +250,6 @@ namespace Prolab22__3.Controllers
                 return NotFound("Rapor bulunamadı veya geçerli bir URL içermiyor.");
             }
 
-
-            // Dosya URL'sini doğrulayın ve indirme işlemi için kullanın
             var uri = new Uri(tibbiRapor.URL);
             if (uri.IsAbsoluteUri && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
             {
@@ -269,10 +277,6 @@ namespace Prolab22__3.Controllers
             }
         }
 
-
-
-
-        // POST: Hastalar/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)

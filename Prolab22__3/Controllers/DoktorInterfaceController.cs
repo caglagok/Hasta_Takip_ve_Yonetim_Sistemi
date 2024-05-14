@@ -21,16 +21,22 @@ namespace Prolab22__3.Controllers
         }
         public IActionResult Index()
         {
+            int? doktorID = HttpContext.Session.GetInt32("DoktorID");
+            if (doktorID == null)
+            {
+                return RedirectToAction("LoginDoktor", "Doktorlar");
+            }
+
             // Giriş yapmış kullanıcı ID'si (doktorID) bir şekilde elde edilmeli, burada örnek olarak 1 kullanılmıştır.
-            int DoktorID = HttpContext.Session.GetInt32("DoktorID") ?? 1; // Varsayılan olarak 1 kullanıldı
+            //int DoktorID = HttpContext.Session.GetInt32("DoktorID") ?? 1; // Varsayılan olarak 1 kullanıldı
             var model = new DoktorDashboardViewModel
             {
-                Randevular = GetDoktorunRandevulari(DoktorID),
-                TibbiRaporlar = GetDoktorunTıbbiRaporları(DoktorID)
+                Randevular = GetDoktorunRandevulari(doktorID.Value),
+                TibbiRaporlar = GetDoktorunTıbbiRaporları(doktorID.Value)
             };
             return View(model);
         }
-  
+
 
         private List<Randevu> GetDoktorunRandevulari(int doktorID)
         {
@@ -38,10 +44,10 @@ namespace Prolab22__3.Controllers
             using (var connection = new SqlConnection(_connectionString))
             {
                 var command = new SqlCommand(@"
-                SELECT r.RandevuID, r.RandevuTarihi, r.RandevuSaati, h.Ad AS HastaAdi, h.Soyad AS HastaSoyadi, h.HastaID
-                FROM Randevular r
-                JOIN Hastalar h ON r.HastaID = h.HastaID
-                WHERE r.DoktorID = @DoktorID", connection);
+            SELECT r.RandevuID, r.RandevuTarihi, r.RandevuSaati, h.Ad AS HastaAdi, h.Soyad AS HastaSoyadi, h.HastaID
+            FROM Randevular r
+            JOIN Hastalar h ON r.HastaID = h.HastaID
+            WHERE r.DoktorID = @DoktorID", connection);
 
                 command.Parameters.AddWithValue("@DoktorID", doktorID);
                 connection.Open();
