@@ -46,6 +46,7 @@ namespace Prolab22__3.Controllers
 
         public IActionResult Details(int id)
         {
+            TempData["PreviousUrl"] = Request.Headers["Referer"].ToString();
             TibbiRapor tibbiRapor = null;
             using (var connection = new SqlConnection(_connectionString))
             {

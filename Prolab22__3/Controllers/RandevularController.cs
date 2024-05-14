@@ -141,12 +141,13 @@ namespace Prolab22__3.Controllers
         }
 
         // GET: Randevular/Create
-        public IActionResult Create()
+        public IActionResult Create(int hastaId)
         {
+            TempData["PreviousUrl"] = Request.Headers["Referer"].ToString();
             int? hastaID = HttpContext.Session.GetInt32("HastaID");
             if (!hastaID.HasValue)
             {
-                return RedirectToAction("Login", "Hastalar");
+                hastaID = hastaId;
             }
 
             var doktorlar = GetDoktorlar();
@@ -226,7 +227,15 @@ namespace Prolab22__3.Controllers
 
                     command.ExecuteNonQuery();
                     TempData["SuccessMessage"] = "Randevu başarıyla kaydedildi.";
-                    return RedirectToAction("Index", "HastaInterface");
+                    string previousUrl = TempData["PreviousUrl"] as string;
+                    if (!string.IsNullOrEmpty(previousUrl))
+                    {
+                        return Redirect(previousUrl);
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "HastaInterface");
+                    }
                 }
             }
 
@@ -291,8 +300,9 @@ namespace Prolab22__3.Controllers
         }
 
         // GET: Randevular/Delete/5
-        public IActionResult Delete(int id)
+        public IActionResult Delete(int id, int hastaId)
         {
+            ViewBag.HastaID = hastaId;
             Randevu randevu = null;
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -323,7 +333,7 @@ namespace Prolab22__3.Controllers
         // POST: Randevular/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
+        public IActionResult DeleteConfirmed(int id, int hastaId)
         {
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -332,7 +342,7 @@ namespace Prolab22__3.Controllers
                 connection.Open();
                 command.ExecuteNonQuery();
             }
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Details", "Hastalar", new { id = hastaId });
         }
     }
 }

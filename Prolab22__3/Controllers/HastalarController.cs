@@ -108,6 +108,7 @@ namespace Prolab22__3.Controllers
         // GET: Hastalar/Details/5
         public IActionResult Details(int id)
         {
+           
             string role = HttpContext.Session.GetString("Role");
             ViewBag.UserRole = role;
             if (role == "Hasta" && HttpContext.Session.GetInt32("HastaID") != id)
@@ -198,6 +199,8 @@ namespace Prolab22__3.Controllers
 
             ViewBag.Randevular = randevular;
             ViewBag.TibbiRaporlar = raporlar;
+            // Önceki sayfanın URL'sini TempData'ya kaydedin
+            TempData["PreviousUrl"] = Request.Headers["Referer"].ToString();
 
             return View(hasta);
         }

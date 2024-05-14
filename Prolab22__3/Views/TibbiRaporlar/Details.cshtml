@@ -4,6 +4,7 @@
     ViewData["Title"] = "Tıbbi Rapor Detayları";
     // URL'nin geçerliliğini kontrol eden kod buraya taşındı
     bool isValidUrl = !string.IsNullOrWhiteSpace(Model.URL) && Uri.TryCreate(Model.URL, UriKind.Absolute, out var uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
+    var previousUrl = TempData["PreviousUrl"] as string;
 }
 
 <h2>@ViewData["Title"]</h2>
@@ -35,7 +36,7 @@
     }
 
     <div>
-        <a asp-controller="TibbiRaporlar" asp-action="Index" class="btn btn-primary">Geri Dön</a>
+        <a href="@previousUrl" class="btn btn-primary">Geri Dön</a>
         <a asp-controller="TibbiRaporlar" asp-action="Edit" asp-route-id="@Model.RaporID" class="btn btn-secondary">Düzenle</a>
         @if (isValidUrl)
         {

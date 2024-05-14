@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Hasta Detayları";
     string userRole = ViewBag.UserRole as string;
+    var previousUrl = TempData["PreviousUrl"] as string;
 }
 
 <h1>Hasta Detayları</h1>
@@ -38,14 +39,7 @@
     <h4>Tıbbi Raporlar</h4>
     <hr />
     <p>
-        @if (userRole == "Doktor")
-        {
-            <a asp-action="Create" asp-controller="TibbiRaporlar" asp-route-hastaId="@Model.HastaID" class="btn btn-primary">Tıbbi Rapor Ekle</a>
-        }
-        else
-        {
-            <a asp-action="Create" asp-controller="TibbiRaporlar" asp-route-hastaId="@Model.HastaID" class="btn btn-primary">Tıbbi Rapor Ekle</a>
-        }
+        <a asp-action="Create" asp-controller="TibbiRaporlar" asp-route-hastaId="@Model.HastaID" class="btn btn-primary">Tıbbi Rapor Ekle</a>
     </p>
     @if (ViewBag.TibbiRaporlar != null && ViewBag.TibbiRaporlar.Count > 0)
     {
@@ -81,6 +75,13 @@
 <div>
     <h4>Randevular</h4>
     <hr />
+    <p>
+        @if (userRole == "Yonetici" || userRole == "Hasta")
+        {
+            <a asp-action="Create" asp-controller="Randevular" asp-route-hastaId="@Model.HastaID" class="btn btn-primary">Randevu Ekle</a>
+        }
+    </p>
+
     @if (ViewBag.Randevular != null && ViewBag.Randevular.Count > 0)
     {
         <table class="table">
@@ -100,10 +101,11 @@
                         <td>@randevu.RandevuTarihi.ToShortDateString()</td>
                         <td>@randevu.RandevuSaati</td>
                         <td>
-                            @if (userRole != "Doktor")
+                            @if (userRole == "Yonetici" || userRole == "Hasta")
                             {
-                                <form asp-action="DeleteRandevu" method="post">
-                                    <input type="hidden" name="randevuId" value="@randevu.RandevuID" />
+                                <form asp-action="Delete" asp-controller="Randevular" method="post">
+                                    <input type="hidden" name="id" value="@randevu.RandevuID" />
+                                    <input type="hidden" name="hastaId" value="@Model.HastaID" />
                                     <input type="submit" value="Sil" class="btn btn-danger" onclick="return confirm('Randevuyu silmek istediğinize emin misiniz?');" />
                                 </form>
                             }
@@ -120,5 +122,5 @@
 </div>
 
 <div>
-    <a asp-action="Index">Geri Dön</a>
+    <a href="@previousUrl" class="btn btn-secondary">Geri Dön</a>
 </div>
