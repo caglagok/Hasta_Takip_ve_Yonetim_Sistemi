@@ -1,0 +1,56 @@
+﻿@model Prolab22__3.Models.Doktor
+
+@{
+    ViewData["Title"] = "Edit Doktor";
+}
+
+<h2>Edit Doktor</h2>
+
+<h4>Doktor</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="DoktorID" />
+            <div class="form-group">
+                <label asp-for="Ad" class="control-label"></label>
+                <input asp-for="Ad" class="form-control" />
+                <span asp-validation-for="Ad" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Soyad" class="control-label"></label>
+                <input asp-for="Soyad" class="form-control" />
+                <span asp-validation-for="Soyad" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="UzmanlikAlani" class="control-label"></label>
+                <input asp-for="UzmanlikAlani" class="form-control" />
+                <span asp-validation-for="UzmanlikAlani" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CalistigiHastane" class="control-label"></label>
+                <input asp-for="CalistigiHastane" class="form-control" />
+                <span asp-validation-for="CalistigiHastane" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Password" class="control-label"></label>
+                <input asp-for="Password" type="password" class="form-control" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index" asp-controller="YoneticiInterface">Geri Dön</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

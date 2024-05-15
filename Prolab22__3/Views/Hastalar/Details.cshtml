@@ -61,6 +61,13 @@
                         <td>@rapor.RaporIcerigi</td>
                         <td>
                             <a asp-action="Details" asp-controller="TibbiRaporlar" asp-route-id="@rapor.RaporID" class="btn btn-info">Detaylar</a>
+                            @if (userRole == "Yonetici")
+                            {
+                                <form asp-action="Delete" asp-controller="TibbiRaporlar" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@rapor.RaporID" />
+                                    <input type="submit" value="Sil" class="btn btn-danger" onclick="return confirm('Tıbbi raporu silmek istediğinize emin misiniz?');" />
+                                </form>
+                            }
                         </td>
                     </tr>
                 }
@@ -107,6 +114,7 @@
                                     <input type="hidden" name="id" value="@randevu.RandevuID" />
                                     <input type="hidden" name="hastaId" value="@Model.HastaID" />
                                     <input type="submit" value="Sil" class="btn btn-danger" onclick="return confirm('Randevuyu silmek istediğinize emin misiniz?');" />
+                                    <a asp-action="Edit" asp-controller="Randevular" asp-route-id="@randevu.RandevuID" class="btn btn-warning">Düzenle</a>
                                 </form>
                             }
                         </td>

@@ -1,0 +1,52 @@
+﻿@model Prolab22__3.Models.Randevu
+
+@{
+    ViewData["Title"] = "Randevu Düzenle";
+    var previousUrl = TempData["PreviousUrl"] as string;
+}
+
+<h1>Randevu Düzenle</h1>
+
+<h4>Randevu</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <input type="hidden" asp-for="RandevuID" />
+            <div class="form-group">
+                <label asp-for="HastaID" class="control-label">Hasta ID</label>
+                <input asp-for="HastaID" class="form-control" readonly="readonly" value="@ViewBag.HastaID" />
+                <span asp-validation-for="HastaID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DoktorID" class="control-label">Doktor ID</label>
+                <input asp-for="DoktorID" class="form-control" readonly="readonly" value="@ViewBag.DoktorID" />
+                <span asp-validation-for="DoktorID" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RandevuTarihi" class="control-label">Randevu Tarihi</label>
+                <input asp-for="RandevuTarihi" class="form-control" type="date" />
+                <span asp-validation-for="RandevuTarihi" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="RandevuSaati" class="control-label">Randevu Saati</label>
+                <input asp-for="RandevuSaati" class="form-control" type="time" />
+                <span asp-validation-for="RandevuSaati" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Kaydet" class="btn btn-primary" />
+                <a asp-action="Details" asp-route-id="@Model.RandevuID" class="btn btn-secondary">İptal</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a href="@previousUrl" class="btn btn-secondary">Geri Dön</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

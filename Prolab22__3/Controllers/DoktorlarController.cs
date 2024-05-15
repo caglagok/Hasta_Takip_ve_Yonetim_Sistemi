@@ -165,7 +165,7 @@ namespace Prolab22__3.Controllers
                     connection.Open();
                     command.ExecuteNonQuery();
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "YoneticiInterface");
             }
             return View(doktor);
         }
@@ -238,7 +238,7 @@ namespace Prolab22__3.Controllers
                 else
                 {
                     // Eğer bir önceki sayfa yoksa varsayılan sayfaya yönlendir
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction("Index", "YoneticiInterface");
                 }
             }
             return View(doktor);

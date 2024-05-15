@@ -139,7 +139,7 @@ namespace Prolab22__3.Controllers
             }
             return View(randevu);
         }
-
+        
         // GET: Randevular/Create
         public IActionResult Create(int hastaId)
         {
@@ -269,8 +269,12 @@ namespace Prolab22__3.Controllers
             {
                 return NotFound();
             }
+            // ViewBag ile Hasta ve Doktor bilgilerini gönderiyoruz
+            ViewBag.HastaID = randevu.HastaID;
+            ViewBag.DoktorID = randevu.DoktorID;
             return View(randevu);
         }
+
         // POST: Randevular/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -294,7 +298,16 @@ namespace Prolab22__3.Controllers
                     connection.Open();
                     command.ExecuteNonQuery();
                 }
-                return RedirectToAction(nameof(Index));
+                // TempData'dan önceki URL'yi al ve yönlendirme yap
+                string previousUrl = TempData["PreviousUrl"] as string;
+                if (!string.IsNullOrEmpty(previousUrl))
+                {
+                    return Redirect(previousUrl);
+                }
+                else
+                {
+                    return RedirectToAction(nameof(Index));
+                }
             }
             return View(randevu);
         }

@@ -79,6 +79,7 @@ namespace Prolab22__3.Controllers
         // GET: TibbiRaporlar/Create
         public IActionResult Create(int? hastaId)
         {
+            ViewBag.PreviousUrl = Request.Headers["Referer"].ToString();
             var userRole = HttpContext.Session.GetString("Role");
             var tibbiRapor = new TibbiRapor { HastaID = hastaId ?? 0 };
 
@@ -127,6 +128,11 @@ namespace Prolab22__3.Controllers
 
                     connection.Open();
                     command.ExecuteNonQuery();
+                }
+                string previousUrl = TempData["PreviousUrl"] as string;
+                if (!string.IsNullOrEmpty(previousUrl))
+                {
+                    return Redirect(previousUrl);
                 }
 
                 // Tıbbi rapor başarıyla eklendikten sonra, hasta detayları sayfasına geri dön
@@ -196,6 +202,45 @@ namespace Prolab22__3.Controllers
 
         public IActionResult Delete(int id)
         {
+            var tibbiRapor = GetTibbiRaporById(id);
+            if (tibbiRapor == null)
+            {
+                return NotFound();
+            }
+
+            ViewBag.PreviousUrl = Request.Headers["Referer"].ToString();
+            return View(tibbiRapor);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteConfirmed(int id, string previousUrl)
+        {
+            int hastaId;
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                // Silinen raporun HastaID'sini alalım
+                var getHastaIdCommand = new SqlCommand("SELECT HastaID FROM TibbiRaporlar WHERE RaporID = @RaporID", connection);
+                getHastaIdCommand.Parameters.AddWithValue("@RaporID", id);
+                connection.Open();
+                hastaId = (int)getHastaIdCommand.ExecuteScalar();
+
+                // Raporu silelim
+                var deleteCommand = new SqlCommand("DELETE FROM TibbiRaporlar WHERE RaporID = @RaporID", connection);
+                deleteCommand.Parameters.AddWithValue("@RaporID", id);
+                deleteCommand.ExecuteNonQuery();
+            }
+
+            // Bir önceki sayfaya geri dön
+            if (!string.IsNullOrEmpty(previousUrl))
+            {
+                return Redirect(previousUrl);
+            }
+
+            return RedirectToAction("Details", "Hastalar", new { id = hastaId });
+        }
+        private TibbiRapor GetTibbiRaporById(int id)
+        {
             TibbiRapor tibbiRapor = null;
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -218,13 +263,8 @@ namespace Prolab22__3.Controllers
                     }
                 }
             }
-            if (tibbiRapor == null)
-            {
-                return NotFound();
-            }
-            return View(tibbiRapor);
-        }
-
+            return tibbiRapor;
+        } 
         public async Task<IActionResult> Download(int id)
         {
             TibbiRapor tibbiRapor = null;
@@ -277,19 +317,34 @@ namespace Prolab22__3.Controllers
                 return NotFound("Rapor URL'si geçersiz veya erişilemez.");
             }
         }
-
+        /*
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id)
         {
+            int hastaId;
             using (var connection = new SqlConnection(_connectionString))
             {
-                var command = new SqlCommand("DELETE FROM TibbiRaporlar WHERE RaporID = @RaporID", connection);
-                command.Parameters.AddWithValue("@RaporID", id);
+                // Silinen raporun HastaID'sini alalım
+                var getHastaIdCommand = new SqlCommand("SELECT HastaID FROM TibbiRaporlar WHERE RaporID = @RaporID", connection);
+                getHastaIdCommand.Parameters.AddWithValue("@RaporID", id);
                 connection.Open();
-                command.ExecuteNonQuery();
+                hastaId = (int)getHastaIdCommand.ExecuteScalar();
+
+                // Raporu silelim
+                var deleteCommand = new SqlCommand("DELETE FROM TibbiRaporlar WHERE RaporID = @RaporID", connection);
+                deleteCommand.Parameters.AddWithValue("@RaporID", id);
+                deleteCommand.ExecuteNonQuery();
             }
-            return RedirectToAction(nameof(Index));
-        }
+
+            // Bir önceki sayfaya geri dön
+            string previousUrl = TempData["PreviousUrl"] as string;
+            if (!string.IsNullOrEmpty(previousUrl))
+            {
+                return Redirect(previousUrl);
+            }
+
+           return RedirectToAction("Details", "Hastalar", new { id = hastaId });
+        }*/
     }
 }

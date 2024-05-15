@@ -34,7 +34,8 @@
             <tr>
                 <th>Rapor Tarihi</th>
                 <th>Rapor İçeriği</th>
-                <th>Detaylar</th> <!-- Yeni sütun eklendi -->
+                <th>Detaylar</th>
+                <th>İşlemler</th>
             </tr>
         </thead>
         <tbody>
@@ -43,8 +44,13 @@
                 <tr>
                     <td>@rapor.RaporTarihi.ToString("dd/MM/yyyy")</td>
                     <td>@rapor.RaporIcerigi</td>
-                    <!-- Detaylar için bağlantı eklendi -->
                     <td><a href="@Url.Action("Details", "TibbiRaporlar", new { id = rapor.RaporID })">Detaylar</a></td>
+                    <td>
+                        <form asp-action="Delete" asp-controller="TibbiRaporlar" method="post" onsubmit="return confirm('Raporu silmek istediğinize emin misiniz?');">
+                            <input type="hidden" name="id" value="@rapor.RaporID" />
+                            <input type="submit" value="Sil" class="btn btn-danger" />
+                        </form>
+                    </td>
                 </tr>
             }
         </tbody>
@@ -55,6 +61,6 @@
     </div>
     <br>
     <div>
-        <a class="btn btn-primary" href="@Url.Action("Create", "TibbiRaporlar")">Tıbbi Rapor Ekleyin</a>
+        <a class="btn btn-primary" href="@Url.Action("Create", "TibbiRaporlar", new { hastaId = Model.HastaID })">Tıbbi Rapor Ekleyin</a>
     </div>
 </div>
