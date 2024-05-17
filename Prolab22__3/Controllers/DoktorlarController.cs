@@ -243,6 +243,8 @@ namespace Prolab22__3.Controllers
             }
             return View(doktor);
         }
+        
+
         // GET: 
         public IActionResult Delete(int id)
         {
@@ -267,6 +269,7 @@ namespace Prolab22__3.Controllers
             }
             return NotFound();
         }
+
 
         // POST: 
         [HttpPost, ActionName("Delete")]

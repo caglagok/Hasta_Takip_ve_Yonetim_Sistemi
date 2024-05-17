@@ -224,8 +224,13 @@ namespace Prolab22__3.Controllers
                     command.Parameters.AddWithValue("@DoktorID", randevu.DoktorID);
                     command.Parameters.AddWithValue("@RandevuTarihi", randevu.RandevuTarihi);
                     command.Parameters.AddWithValue("@RandevuSaati", randevu.RandevuSaati);
-
                     command.ExecuteNonQuery();
+
+
+                    // Doktora bildirim ekleme
+                    var doktorBildirimMesaj = $"Yeni bir randevu alındı: {randevu.RandevuTarihi.ToString("dd/MM/yyyy")} {randevu.RandevuSaati}";
+                    DoktoraBildirimEkle(randevu.DoktorID, doktorBildirimMesaj);
+
                     TempData["SuccessMessage"] = "Randevu başarıyla kaydedildi.";
                     string previousUrl = TempData["PreviousUrl"] as string;
                     if (!string.IsNullOrEmpty(previousUrl))
@@ -240,6 +245,20 @@ namespace Prolab22__3.Controllers
             }
 
             return View(randevu);
+        }
+        private void DoktoraBildirimEkle(int doktorID, string mesaj)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var command = new SqlCommand("INSERT INTO Bildirimler (KullaniciID, Mesaj, OlusturmaTarihi, Okundu, Role) VALUES (@KullaniciID, @Mesaj, @OlusturmaTarihi, @Okundu, @Role)", connection);
+                command.Parameters.AddWithValue("@KullaniciID", doktorID);
+                command.Parameters.AddWithValue("@Mesaj", mesaj);
+                command.Parameters.AddWithValue("@OlusturmaTarihi", DateTime.Now);
+                command.Parameters.AddWithValue("@Okundu", false);
+                command.Parameters.AddWithValue("@Role", "Doktor");
+                connection.Open();
+                command.ExecuteNonQuery();
+            }
         }
         // GET: Randevular/Edit/5
         public IActionResult Edit(int? id)

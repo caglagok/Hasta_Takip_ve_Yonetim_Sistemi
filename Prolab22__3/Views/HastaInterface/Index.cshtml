@@ -66,4 +66,29 @@
     <div>
         <a class="btn btn-primary" href="@Url.Action("Create", "TibbiRaporlar", new { hastaId = Model.HastaID })">Tıbbi Rapor Ekleyin</a>
     </div>
+    <h3>Bildirimler</h3>
+    <ul>
+        @foreach (var bildirim in Model.Bildirimler)
+        {
+            <li class="@(bildirim.Okundu ? "okundu" : "okunmamis")">
+                @bildirim.Mesaj - @bildirim.OlusturmaTarihi.ToString("g")
+                @if (!bildirim.Okundu)
+                {
+                    <form asp-action="MarkAsRead" method="post" style="display:inline;">
+                        <input type="hidden" name="bildirimID" value="@bildirim.BildirimID" />
+                        <button type="submit" class="btn btn-link">Okundu olarak işaretle</button>
+                    </form>
+                }
+            </li>
+        }
+    </ul>
 </div>
+
+<style>
+    .okundu {
+        background-color: #dcdcdc;
+    }
+    .okunmamis {
+        background-color: #ffcccb;
+    }
+</style>
