@@ -1,25 +1,39 @@
 html {
-  font-size: 14px;
+    font-size: 14px;
+    position: relative;
+    min-height: 100%;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
+}
+
+.text-center p {
+    color: #ffffff; /* Beyaz renk */
+}
+.instruction {
+    color: #ffffff; /* Beyaz renk */
 }
 
 .btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
 }
+
+.home-index-page {
+    background-image: url('https://gunceloku.com/uploads/doktorlar-dizisi-cekildigi-hastanenin-adi-nedir-63c2f180f378a.png'); /* Arka plan resmi */
+    background-size: cover; /* Resmin boyutunu sayfayý kaplayacak þekilde ayarlar */
+    background-position: center; /* Resmin ortalanmasýný saðlar */
+    background-repeat: no-repeat; /* Resmin tekrarlanmasýný engeller */
+    height: 100vh; /* Yüksekliði tarayýcý penceresinin tamamýný kaplar */
+    margin-bottom: 60px; /* Alt kýsma boþluk ekler */
+}
+
+
 .login-container {
     width: 100%;
     max-width: 400px;
@@ -40,15 +54,40 @@ input[type="text"], input[type="password"] {
     border: 1px solid #ccc;
     box-sizing: border-box;
 }
+h1.display-4 {
+    font-size: 48px; /* Baþlýk boyutunu artýr */
+    font-weight: bold; /* Baþlýk fontunu kalýn yap */
+    color: #ffffff; /* Beyaz renk */
+    margin-top: 20px; /* Üstten boþluk */
+}
 
-button[type="submit"] {
-    background-color: #4CAF50;
-    color: white;
-    padding: 14px 20px;
-    margin: 8px 0;
+button {
+    background-color: #4CAF50; /* Yeþil arka plan rengi */
+    color: white; /* Beyaz yazý rengi */
+    padding: 20px 30px; /* Daha büyük padding */
+    font-size: 18px; /* Büyük yazý boyutu */
+    font-weight: bold; /* Kalýn yazý tipi */
+    margin: 10px auto; /* Üst ve alttan 10px, sað ve soldan otomatik */
+    width: 200px; /* Tüm butonlarýn geniþliðini 200px yapar */
+    text-align: center; /* Buton içindeki yazýlarý ortalar */
     border: none;
     cursor: pointer;
-    width: 100%;
+    transition: background-color 0.3s, transform 0.3s; /* Animasyon için geçiþ süresi */
+}
+
+    button:hover {
+        background-color: #0056b3; /* Fare üzerine geldiðinde daha koyu mavi */
+        transform: scale(1.05); /* Fare üzerine geldiðinde büyüt */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Fare üzerine geldiðinde gölge efekti */
+    }
+button[type="submit"] {
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        margin: 8px 0;
+        border: none;
+        cursor: pointer;
+        width: 100%;
 }
 
     button[type="submit"]:hover {

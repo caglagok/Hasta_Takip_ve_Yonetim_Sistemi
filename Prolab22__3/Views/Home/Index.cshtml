@@ -10,10 +10,10 @@
     <title>Giriş Ekranı</title>
     <link rel="stylesheet" href="~/css/styles.css">
 </head>
-<body>
+<body class="home-index-page">
     <div class="text-center">
         <h1 class="display-4">Hoş Geldiniz</h1>
-        <p>Lütfen giriş yapmak istediğiniz hesap türünü seçiniz:</p>
+        <p class="instruction">Lütfen yapmak istediğiniz işlem türünü seçiniz:</p>
         <div>
             <!-- Hasta, Doktor ve Yönetici için giriş yönlendirmeleri -->
             <button onclick="window.location.href='@Url.Action("LoginHasta", "Hastalar")'">Hasta Girişi</button>

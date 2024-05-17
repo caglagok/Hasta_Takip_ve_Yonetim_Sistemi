@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Rapor Düzenle";
+    string role = ViewBag.Role as string;
 }
 
 <h1>Rapor Düzenle</h1>
@@ -45,5 +46,12 @@
 </div>
 
 <div>
-    <a asp-action="Index" asp-controller="HastaInterface">Geri Dön</a>
+    @if (role == "Hasta")
+    {
+        <a asp-action="Index" asp-controller="HastaInterface">Geri Dön</a>
+    }
+    else
+    {
+        <a asp-action="Details" asp-controller="Hastalar" asp-route-id="@Model.HastaID">Geri Dön</a>
+    }
 </div>

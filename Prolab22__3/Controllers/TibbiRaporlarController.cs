@@ -196,6 +196,7 @@ namespace Prolab22__3.Controllers
                     connection.Open();
                     command.ExecuteNonQuery();
                 }
+
                 return RedirectToAction("Index", "HastaInterface", new { id = tibbiRapor.HastaID });
             }
             return View(tibbiRapor);
