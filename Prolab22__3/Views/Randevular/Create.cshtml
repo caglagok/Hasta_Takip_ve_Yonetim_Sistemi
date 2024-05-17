@@ -27,10 +27,10 @@
     </select>
 
     <label for="randevuTarihi">Randevu Tarihi:</label>
-    <input type="date" id="randevuTarihi" name="RandevuTarihi" required>
+    <input type="date" id="randevuTarihi" name="RandevuTarihi" value="@DateTime.Now.ToString("yyyy-MM-dd")" required>
 
     <label for="randevuSaati">Randevu Saati:</label>
-    <input type="time" id="randevuSaati" name="RandevuSaati" required>
+    <input type="time" id="randevuSaati" name="RandevuSaati" value="@DateTime.Now.ToString("HH:mm")" required>
 
     <button type="submit">Randevu Oluştur</button>
 </form>

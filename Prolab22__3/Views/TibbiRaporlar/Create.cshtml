@@ -38,7 +38,7 @@
     </div>
     <div class="form-group">
         <label asp-for="RaporTarihi" class="control-label"></label>
-        <input asp-for="RaporTarihi" class="form-control" />
+        <input asp-for="RaporTarihi" class="form-control" type="datetime-local" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" />
         <span asp-validation-for="RaporTarihi" class="text-danger"></span>
     </div>
     <div class="form-group">
