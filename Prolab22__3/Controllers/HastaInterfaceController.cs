@@ -27,7 +27,7 @@ namespace Prolab22__3.Controllers
             {
                 Randevular = GetRandevular(hastaID),
                 TibbiRaporlar = GetTibbiRaporlar(hastaID),
-                Bildirimler = GetBildirimler(hastaID) // Bildirimleri çekin
+                Bildirimler = GetHastaBildirimler(hastaID) // Bildirimleri çekin
             };
             return View(model);
         }
@@ -84,13 +84,17 @@ namespace Prolab22__3.Controllers
             }
             return raporlar;
         }
-        private List<Bildirim> GetBildirimler(int hastaID)
+        private List<Bildirim> GetHastaBildirimler(int hastaID)
         {
             List<Bildirim> bildirimler = new List<Bildirim>();
             using (var connection = new SqlConnection(_connectionString))
             {
-                var command = new SqlCommand("SELECT BildirimID, Mesaj, OlusturmaTarihi, Okundu FROM Bildirimler WHERE KullaniciID = @KullaniciID", connection);
-                command.Parameters.AddWithValue("@KullaniciID", hastaID);
+                var command = new SqlCommand(@"
+                    SELECT BildirimID, Mesaj, OlusturmaTarihi, Okundu 
+                    FROM Bildirimler 
+                    WHERE KullaniciID = @HastaID AND Role = 'Hasta'", connection);
+
+                command.Parameters.AddWithValue("@HastaID", hastaID);
                 connection.Open();
                 using (var reader = command.ExecuteReader())
                 {
@@ -119,6 +123,7 @@ namespace Prolab22__3.Controllers
                 connection.Open();
                 command.ExecuteNonQuery();
             }
+
             return RedirectToAction("Index");
         }
 

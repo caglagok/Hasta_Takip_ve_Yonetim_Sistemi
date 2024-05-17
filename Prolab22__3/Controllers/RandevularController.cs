@@ -227,9 +227,11 @@ namespace Prolab22__3.Controllers
                     command.ExecuteNonQuery();
 
 
-                    // Doktora bildirim ekleme
-                    var doktorBildirimMesaj = $"Yeni bir randevu alındı: {randevu.RandevuTarihi.ToString("dd/MM/yyyy")} {randevu.RandevuSaati}";
-                    DoktoraBildirimEkle(randevu.DoktorID, doktorBildirimMesaj);
+                    // Doktora bildirim ekleyin
+                    var bildirimCommand = new SqlCommand("INSERT INTO Bildirimler (KullaniciID, Role, Mesaj, OlusturmaTarihi, Okundu) VALUES (@DoktorID, 'Doktor', @Mesaj, GETDATE(), 0)", connection);
+                    bildirimCommand.Parameters.AddWithValue("@DoktorID", randevu.DoktorID);
+                    bildirimCommand.Parameters.AddWithValue("@Mesaj", "Yeni bir randevu alındı.");
+                    bildirimCommand.ExecuteNonQuery();
 
                     TempData["SuccessMessage"] = "Randevu başarıyla kaydedildi.";
                     string previousUrl = TempData["PreviousUrl"] as string;
