@@ -104,7 +104,30 @@ namespace Prolab22__3.Controllers
                 return View();
             }
         }
-
+        public IActionResult Bildirimler(int id)
+        {
+            var bildirimler = new List<Bildirim>();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var command = new SqlCommand("SELECT BildirimID, Mesaj, OlusturmaTarihi, Okundu FROM Bildirimler WHERE KullaniciID = @KullaniciID", connection);
+                command.Parameters.AddWithValue("@KullaniciID", id);
+                connection.Open();
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        bildirimler.Add(new Bildirim
+                        {
+                            BildirimID = reader.GetInt32(0),
+                            Mesaj = reader.GetString(1),
+                            OlusturmaTarihi = reader.GetDateTime(2),
+                            Okundu = reader.GetBoolean(3)
+                        });
+                    }
+                }
+            }
+            return View(bildirimler);
+        }
         // GET: Hastalar/Details/5
         public IActionResult Details(int id)
         {

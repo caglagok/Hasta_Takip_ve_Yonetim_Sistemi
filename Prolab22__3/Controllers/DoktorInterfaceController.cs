@@ -32,11 +32,53 @@ namespace Prolab22__3.Controllers
             var model = new DoktorDashboardViewModel
             {
                 Randevular = GetDoktorunRandevulari(doktorID.Value),
-                TibbiRaporlar = GetDoktorunTıbbiRaporları(doktorID.Value)
+                TibbiRaporlar = GetDoktorunTıbbiRaporları(doktorID.Value),
+                 Bildirimler = GetDoktorBildirimler(doktorID.Value)
             };
             return View(model);
         }
+        private List<Bildirim> GetDoktorBildirimler(int doktorID)
+        {
+            List<Bildirim> bildirimler = new List<Bildirim>();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var command = new SqlCommand(@"
+                    SELECT BildirimID, Mesaj, OlusturmaTarihi, Okundu 
+                    FROM Bildirimler 
+                    WHERE KullaniciID = @DoktorID AND Role = 'Doktor'", connection);
 
+                command.Parameters.AddWithValue("@DoktorID", doktorID);
+                connection.Open();
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        bildirimler.Add(new Bildirim
+                        {
+                            BildirimID = reader.GetInt32(0),
+                            Mesaj = reader.GetString(1),
+                            OlusturmaTarihi = reader.GetDateTime(2),
+                            Okundu = reader.GetBoolean(3)
+                        });
+                    }
+                }
+            }
+            return bildirimler;
+        }
+
+        [HttpPost]
+        public IActionResult MarkAsRead(int bildirimID)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var command = new SqlCommand("UPDATE Bildirimler SET Okundu = 1 WHERE BildirimID = @BildirimID", connection);
+                command.Parameters.AddWithValue("@BildirimID", bildirimID);
+                connection.Open();
+                command.ExecuteNonQuery();
+            }
+
+            return RedirectToAction("Index");
+        }
 
         private List<Randevu> GetDoktorunRandevulari(int doktorID)
         {

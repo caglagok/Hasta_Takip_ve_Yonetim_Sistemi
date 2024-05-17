@@ -26,7 +26,8 @@ namespace Prolab22__3.Controllers
             var model = new HastaDashboardViewModel
             {
                 Randevular = GetRandevular(hastaID),
-                TibbiRaporlar = GetTibbiRaporlar(hastaID)
+                TibbiRaporlar = GetTibbiRaporlar(hastaID),
+                Bildirimler = GetBildirimler(hastaID) // Bildirimleri çekin
             };
             return View(model);
         }
@@ -83,7 +84,43 @@ namespace Prolab22__3.Controllers
             }
             return raporlar;
         }
-       
+        private List<Bildirim> GetBildirimler(int hastaID)
+        {
+            List<Bildirim> bildirimler = new List<Bildirim>();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var command = new SqlCommand("SELECT BildirimID, Mesaj, OlusturmaTarihi, Okundu FROM Bildirimler WHERE KullaniciID = @KullaniciID", connection);
+                command.Parameters.AddWithValue("@KullaniciID", hastaID);
+                connection.Open();
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        bildirimler.Add(new Bildirim
+                        {
+                            BildirimID = reader.GetInt32(0),
+                            Mesaj = reader.GetString(1),
+                            OlusturmaTarihi = reader.GetDateTime(2),
+                            Okundu = reader.GetBoolean(3)
+                        });
+                    }
+                }
+            }
+            return bildirimler;
+        }
+
+        [HttpPost]
+        public IActionResult MarkAsRead(int bildirimID)
+        {
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                var command = new SqlCommand("UPDATE Bildirimler SET Okundu = 1 WHERE BildirimID = @BildirimID", connection);
+                command.Parameters.AddWithValue("@BildirimID", bildirimID);
+                connection.Open();
+                command.ExecuteNonQuery();
+            }
+            return RedirectToAction("Index");
+        }
 
         public IActionResult GetHastaRandevular(int hastaID)
         {
