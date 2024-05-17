@@ -32,21 +32,33 @@
         </tbody>
     </table>
     <h3>Bildirimler</h3>
-    <ul>
-        @foreach (var bildirim in Model.Bildirimler)
-        {
-            <li class="@(bildirim.Okundu ? "okundu" : "okunmamis")">
-                @bildirim.Mesaj - @bildirim.OlusturmaTarihi.ToString("g")
-                @if (!bildirim.Okundu)
-                {
-                    <form asp-action="MarkAsRead" method="post" style="display:inline;">
-                        <input type="hidden" name="bildirimID" value="@bildirim.BildirimID" />
-                        <button type="submit" class="btn btn-link">Okundu olarak işaretle</button>
-                    </form>
-                }
-            </li>
-        }
-    </ul>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Mesaj</th>
+                <th>Oluşturma Tarihi</th>
+                <th>İşlemler</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var bildirim in Model.Bildirimler)
+            {
+                <tr class="@(bildirim.Okundu ? "okundu" : "okunmamis")">
+                    <td>@bildirim.Mesaj</td>
+                    <td>@bildirim.OlusturmaTarihi.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>
+                        @if (!bildirim.Okundu)
+                        {
+                            <form asp-action="MarkAsRead" method="post" style="display:inline;">
+                                <input type="hidden" name="bildirimID" value="@bildirim.BildirimID" />
+                                <button type="submit" class="btn btn-primary">Okundu Olarak İşaretle</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>
 
 <style>

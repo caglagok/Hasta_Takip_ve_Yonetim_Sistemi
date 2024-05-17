@@ -130,16 +130,17 @@ namespace Prolab22__3.Controllers
                     connection.Open();
                     command.ExecuteNonQuery();
                     // Bildirim ekleyin
-                    var bildirimCommand = new SqlCommand("INSERT INTO Bildirimler (KullaniciID, Mesaj, OlusturmaTarihi, Okundu) VALUES (@KullaniciID, @Mesaj, @OlusturmaTarihi, @Okundu)", connection);
+                    var bildirimCommand = new SqlCommand("INSERT INTO Bildirimler (KullaniciID, Role, Mesaj, OlusturmaTarihi, Okundu) VALUES (@KullaniciID, @Role, @Mesaj, @OlusturmaTarihi, @Okundu)", connection);
                     bildirimCommand.Parameters.AddWithValue("@KullaniciID", tibbiRapor.HastaID);
+                    bildirimCommand.Parameters.AddWithValue("@Role", "Hasta"); // Role değerini ekleyin
                     bildirimCommand.Parameters.AddWithValue("@Mesaj", "Yeni tıbbi raporunuz eklendi.");
                     bildirimCommand.Parameters.AddWithValue("@OlusturmaTarihi", DateTime.Now);
                     bildirimCommand.Parameters.AddWithValue("@Okundu", false);
                     bildirimCommand.ExecuteNonQuery();
 
                 }
-              
-              
+
+
 
                 if (userRole == "Hasta")
                 {

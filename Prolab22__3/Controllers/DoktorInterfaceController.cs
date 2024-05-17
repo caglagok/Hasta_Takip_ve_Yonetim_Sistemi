@@ -65,7 +65,6 @@ namespace Prolab22__3.Controllers
             }
             return bildirimler;
         }
-
         [HttpPost]
         public IActionResult MarkAsRead(int bildirimID)
         {
@@ -79,7 +78,6 @@ namespace Prolab22__3.Controllers
 
             return RedirectToAction("Index");
         }
-
         private List<Randevu> GetDoktorunRandevulari(int doktorID)
         {
             var randevular = new List<Randevu>();
