@@ -33,7 +33,7 @@ namespace Prolab22__3.Controllers
             {
                 Randevular = GetDoktorunRandevulari(doktorID.Value),
                 TibbiRaporlar = GetDoktorunTıbbiRaporları(doktorID.Value),
-                 Bildirimler = GetDoktorBildirimler(doktorID.Value)
+                Bildirimler = GetDoktorBildirimler(doktorID.Value)
             };
             return View(model);
         }
