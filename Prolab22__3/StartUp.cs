@@ -2,8 +2,7 @@
 //using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
-using DinkToPdf.Contracts;
-using DinkToPdf;
+
 namespace Prolab22__3
 {
     public class StartUp
@@ -19,7 +18,7 @@ namespace Prolab22__3
         {   
             services.AddControllersWithViews();
             services.AddDistributedMemoryCache();
-            services.AddSingleton(typeof(IConverter), new SynchronizedConverter(new PdfTools()));
+           
             services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(30);

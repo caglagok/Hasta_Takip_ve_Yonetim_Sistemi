@@ -23,6 +23,9 @@
                     <td>@randevu.RandevuTarihi.ToString("dd/MM/yyyy")</td>
                     <td>@randevu.RandevuSaati</td>
                     <td>@randevu.DoktorAdi</td>
+                    <td>
+                        <a href="@Url.Action("Edit", "Randevular", new { id = randevu.RandevuID })" class="btn btn-secondary">Düzenle</a>
+                    </td>
                 </tr>
             }
         </tbody>

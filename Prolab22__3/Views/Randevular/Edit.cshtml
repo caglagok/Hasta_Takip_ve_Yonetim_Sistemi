@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Randevu Düzenle";
     var previousUrl = TempData["PreviousUrl"] as string;
+    string userRole = ViewBag.UserRole as string;
 }
 
 <h1>Randevu Düzenle</h1>
@@ -11,7 +12,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" asp-controller="Randevular">
             <input type="hidden" asp-for="RandevuID" />
             <div class="form-group">
                 <label asp-for="HastaID" class="control-label">Hasta ID</label>
@@ -35,7 +36,14 @@
             </div>
             <div class="form-group">
                 <input type="submit" value="Kaydet" class="btn btn-primary" />
-                <a asp-action="Details" asp-route-id="@Model.RandevuID" class="btn btn-secondary">İptal</a>
+                @if (userRole == "Yonetici")
+                {
+                    <a asp-action="Details" asp-controller="Hastalar" asp-route-id="@Model.RandevuID" class="btn btn-secondary">İptal</a>
+                }
+                else if (userRole == "Hasta")
+                {
+                    <a asp-action="Index" asp-controller="HastaInterface" class="btn btn-secondary">İptal</a>
+                }
             </div>
         </form>
     </div>

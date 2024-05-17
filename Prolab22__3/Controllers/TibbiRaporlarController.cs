@@ -105,7 +105,7 @@ namespace Prolab22__3.Controllers
             }
             else
             {
-                ViewBag.UserRole = "Yönetici";
+                ViewBag.UserRole = "Yonetici";
             }
             return View(tibbiRapor);
         }
@@ -115,6 +115,7 @@ namespace Prolab22__3.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create([Bind("HastaID, DoktorID, RaporTarihi, RaporIcerigi, URL")] TibbiRapor tibbiRapor)
         {
+            var userRole = HttpContext.Session.GetString("Role");
             if (ModelState.IsValid)
             {
                 using (var connection = new SqlConnection(_connectionString))
@@ -129,14 +130,14 @@ namespace Prolab22__3.Controllers
                     connection.Open();
                     command.ExecuteNonQuery();
                 }
-                string previousUrl = TempData["PreviousUrl"] as string;
-                if (!string.IsNullOrEmpty(previousUrl))
+                if (userRole == "Hasta")
                 {
-                    return Redirect(previousUrl);
+                    return RedirectToAction("Index", "HastaInterface");
                 }
-
-                // Tıbbi rapor başarıyla eklendikten sonra, hasta detayları sayfasına geri dön
-                return RedirectToAction("Details", "Hastalar", new { id = tibbiRapor.HastaID });
+                else
+                {
+                    return RedirectToAction("Details", "Hastalar", new { id = tibbiRapor.HastaID });
+                }
             }
             return View(tibbiRapor);
         }
@@ -217,6 +218,7 @@ namespace Prolab22__3.Controllers
         public IActionResult DeleteConfirmed(int id, string previousUrl)
         {
             int hastaId;
+            var userRole = HttpContext.Session.GetString("Role");
             using (var connection = new SqlConnection(_connectionString))
             {
                 // Silinen raporun HastaID'sini alalım
@@ -231,13 +233,14 @@ namespace Prolab22__3.Controllers
                 deleteCommand.ExecuteNonQuery();
             }
 
-            // Bir önceki sayfaya geri dön
-            if (!string.IsNullOrEmpty(previousUrl))
+            if (userRole == "Hasta")
             {
-                return Redirect(previousUrl);
+                return RedirectToAction("Index", "HastaInterface");
             }
-
-            return RedirectToAction("Details", "Hastalar", new { id = hastaId });
+            else
+            {
+                return RedirectToAction("Details", "Hastalar", new { id = hastaId });
+            }
         }
         private TibbiRapor GetTibbiRaporById(int id)
         {

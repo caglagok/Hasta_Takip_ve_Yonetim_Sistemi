@@ -242,8 +242,13 @@ namespace Prolab22__3.Controllers
             return View(randevu);
         }
         // GET: Randevular/Edit/5
-        public IActionResult Edit(int id)
+        public IActionResult Edit(int? id)
         {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
             Randevu randevu = null;
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -269,48 +274,67 @@ namespace Prolab22__3.Controllers
             {
                 return NotFound();
             }
-            // ViewBag ile Hasta ve Doktor bilgilerini gönderiyoruz
+
             ViewBag.HastaID = randevu.HastaID;
             ViewBag.DoktorID = randevu.DoktorID;
+            ViewBag.UserRole = HttpContext.Session.GetString("Role") ?? "";
+
+            TempData["PreviousUrl"] = Request.Headers["Referer"].ToString();
+
             return View(randevu);
         }
 
         // POST: Randevular/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(int id, [Bind("HastaID, DoktorID, RandevuTarihi, RandevuSaati")] Randevu randevu)
+        public IActionResult Edit(int id, [Bind("RandevuID,HastaID,DoktorID,RandevuTarihi,RandevuSaati")] Randevu randevu)
         {
             if (id != randevu.RandevuID)
             {
                 return NotFound();
             }
+
             if (ModelState.IsValid)
             {
                 using (var connection = new SqlConnection(_connectionString))
                 {
-                    var command = new SqlCommand("UPDATE Randevular SET HastaID=@HastaID,DoktorID=@DoktorID, RandevuTarihi=@RandevuTarihi, RandevuSaati=@RandevuSaati   WHERE RandevuID=@RandevuID ", connection);
+                    var command = new SqlCommand("UPDATE Randevular SET HastaID=@HastaID,DoktorID=@DoktorID, RandevuTarihi=@RandevuTarihi, RandevuSaati=@RandevuSaati WHERE RandevuID=@RandevuID", connection);
                     command.Parameters.AddWithValue("@HastaID", randevu.HastaID);
                     command.Parameters.AddWithValue("@DoktorID", randevu.DoktorID);
                     command.Parameters.AddWithValue("@RandevuTarihi", randevu.RandevuTarihi);
                     command.Parameters.AddWithValue("@RandevuSaati", randevu.RandevuSaati);
-
+                    command.Parameters.AddWithValue("@RandevuID", randevu.RandevuID);
 
                     connection.Open();
                     command.ExecuteNonQuery();
                 }
-                // TempData'dan önceki URL'yi al ve yönlendirme yap
-                string previousUrl = TempData["PreviousUrl"] as string;
-                if (!string.IsNullOrEmpty(previousUrl))
+                string userRole = HttpContext.Session.GetString("Role") ?? "";
+                if (userRole == "Yonetici")
                 {
-                    return Redirect(previousUrl);
+                    return RedirectToAction("Details", "Hastalar", new { id = randevu.HastaID });
+                }
+                else if (userRole == "Hasta")
+                {
+                    return RedirectToAction("Index", "HastaInterface");
                 }
                 else
                 {
-                    return RedirectToAction(nameof(Index));
+                    string previousUrl = TempData["PreviousUrl"] as string;
+                    if (!string.IsNullOrEmpty(previousUrl))
+                    {
+                        return Redirect(previousUrl);
+                    }
+                    else
+                    {
+                        return RedirectToAction(nameof(Index));
+                    }
                 }
             }
+
             return View(randevu);
         }
+
+
 
         // GET: Randevular/Delete/5
         public IActionResult Delete(int id, int hastaId)
