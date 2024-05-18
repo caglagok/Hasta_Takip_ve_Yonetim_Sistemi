@@ -6,6 +6,7 @@ using Microsoft.Data.SqlClient;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace Prolab22__3.Controllers
 {
@@ -200,11 +201,12 @@ namespace Prolab22__3.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(Randevu randevu)
-        {
+        {var userRole = HttpContext.Session.GetString("Role");
             if (ModelState.IsValid)
             {
                 using (var connection = new SqlConnection(_connectionString))
                 {
+                    
                     // Önce HastaID'nin varlığını kontrol edin
                     var checkCommand = new SqlCommand("SELECT COUNT(1) FROM Hastalar WHERE HastaID = @HastaID", connection);
                     checkCommand.Parameters.AddWithValue("@HastaID", randevu.HastaID);
@@ -225,8 +227,7 @@ namespace Prolab22__3.Controllers
                     command.Parameters.AddWithValue("@RandevuTarihi", randevu.RandevuTarihi);
                     command.Parameters.AddWithValue("@RandevuSaati", randevu.RandevuSaati);
                     command.ExecuteNonQuery();
-
-
+                
                     // Doktora bildirim ekleyin
                     var bildirimCommand = new SqlCommand("INSERT INTO Bildirimler (KullaniciID, Role, Mesaj, OlusturmaTarihi, Okundu) VALUES (@DoktorID, 'Doktor', @Mesaj, GETDATE(), 0)", connection);
                     bildirimCommand.Parameters.AddWithValue("@DoktorID", randevu.DoktorID);
@@ -235,13 +236,13 @@ namespace Prolab22__3.Controllers
 
                     TempData["SuccessMessage"] = "Randevu başarıyla kaydedildi.";
                     string previousUrl = TempData["PreviousUrl"] as string;
-                    if (!string.IsNullOrEmpty(previousUrl))
+                    if (userRole == "Hasta")
                     {
-                        return Redirect(previousUrl);
+                        return RedirectToAction("Index", "HastaInterface");
                     }
                     else
                     {
-                        return RedirectToAction("Index", "HastaInterface");
+                        return RedirectToAction("Details", "Hastalar", new { id = randevu.HastaID });
                     }
                 }
             }
@@ -388,11 +389,13 @@ namespace Prolab22__3.Controllers
             }
             return View(randevu);
         }
+
         // POST: Randevular/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public IActionResult DeleteConfirmed(int id, int hastaId)
         {
+            var userRole = HttpContext.Session.GetString("Role");
             using (var connection = new SqlConnection(_connectionString))
             {
                 var command = new SqlCommand("DELETE FROM Randevular WHERE RandevuID = @RandevuID", connection);
@@ -400,7 +403,16 @@ namespace Prolab22__3.Controllers
                 connection.Open();
                 command.ExecuteNonQuery();
             }
-            return RedirectToAction("Details", "Hastalar", new { id = hastaId });
+            if (userRole == "Hasta")
+            {
+                return RedirectToAction("Index", "HastaInterface");
+            }
+            else
+            {
+                return RedirectToAction("Details", "Hastalar", new { id = hastaId });
+            }
+
+         
         }
     }
 }

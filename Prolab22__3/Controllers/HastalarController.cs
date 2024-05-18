@@ -138,7 +138,7 @@ namespace Prolab22__3.Controllers
             {
                 return Unauthorized("Yalnızca kendi bilgilerinizi görüntüleyebilirsiniz.");
             }
-            // int? doktorID = HttpContext.Session.GetInt32("DoktorID");
+           
             if (role == "Doktor")
             {
 

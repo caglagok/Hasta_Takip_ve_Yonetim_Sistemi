@@ -1,7 +1,8 @@
-﻿//using Microsoft.AspNetCore.Hosting;
-//using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 
 namespace Prolab22__3
 {
@@ -18,7 +19,12 @@ namespace Prolab22__3
         {   
             services.AddControllersWithViews();
             services.AddDistributedMemoryCache();
-           
+            // HTTPS için gerekli konfigürasyonlar
+            services.AddHttpsRedirection(options =>
+            {
+                options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
+                options.HttpsPort = 443;
+            });
             services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(30);
