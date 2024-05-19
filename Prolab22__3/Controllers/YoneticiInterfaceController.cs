@@ -22,18 +22,18 @@ namespace Prolab22__3.Controllers
         public IActionResult Index(int page = 1)
         {
 
-            int pageSize = 50; // Sayfa başına kayıt sayısı
+            int pageSize = 50; 
             List<Hasta> hastalar = new List<Hasta>();
             List<Doktor> doktorlar = new List<Doktor>();
 
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
-                // Toplam hasta sayısını hesapla
+              
                 SqlCommand countCmd = new SqlCommand("SELECT COUNT(*) FROM Hastalar", connection);
                 int totalHastaCount = (int)countCmd.ExecuteScalar();
 
-                // Hastaları çek
+              
                 var hastaCommand = new SqlCommand($@"
                 SELECT *
                 FROM (
@@ -55,12 +55,12 @@ namespace Prolab22__3.Controllers
                             HastaID = reader.GetInt32(reader.GetOrdinal("HastaID")),
                             Ad = reader.GetString(reader.GetOrdinal("Ad")),
                             Soyad = reader.GetString(reader.GetOrdinal("Soyad")),
-                            // Diğer alanlar...
+                           
                         });
                     }
                 }
 
-                // Doktorları çek
+           
                 var doktorCommand = new SqlCommand($@"
                 SELECT *
                 FROM (
@@ -101,17 +101,17 @@ namespace Prolab22__3.Controllers
     }
         private List<Hasta> GetHastalar()
         {
-            var hastalar = new List<Hasta>(); // Hasta listesi için boş bir liste oluşturuyoruz.
-            using (var connection = new SqlConnection(_connectionString)) // Veritabanı bağlantısı
+            var hastalar = new List<Hasta>(); 
+            using (var connection = new SqlConnection(_connectionString)) 
             {
-                // SQL sorgusu: Hastalar tablosundan gerekli bilgileri seçiyoruz.
+              
                 var command = new SqlCommand("SELECT HastaID, Ad, Soyad, DogumTarihi, Cinsiyet, TelefonNumarasi, Adres FROM Hastalar", connection);
-                connection.Open(); // Bağlantıyı açıyoruz.
-                using (var reader = command.ExecuteReader()) // Sorguyu çalıştırıp, sonuçları okuyoruz.
+                connection.Open();
+                using (var reader = command.ExecuteReader()) 
                 {
-                    while (reader.Read()) // Okunan her kayıt için
+                    while (reader.Read()) 
                     {
-                        hastalar.Add(new Hasta // Hasta listesine yeni bir Hasta nesnesi ekliyoruz.
+                        hastalar.Add(new Hasta 
                         {
                             HastaID = reader.GetInt32(reader.GetOrdinal("HastaID")),
                             Ad = reader.IsDBNull(reader.GetOrdinal("Ad")) ? null : reader.GetString(reader.GetOrdinal("Ad")),
@@ -124,7 +124,7 @@ namespace Prolab22__3.Controllers
                     }
                 }
             }
-            return hastalar; // Doldurulmuş hasta listesini döndürüyoruz.
+            return hastalar; 
         }
 
 
@@ -303,7 +303,7 @@ namespace Prolab22__3.Controllers
             }
             return View();
         }
-        // Randevu iptal etme işlemi
+        
         // GET: YoneticiInterface/RandevuIptal
         public IActionResult RandevuIptal()
         {
@@ -340,7 +340,7 @@ namespace Prolab22__3.Controllers
             return View();
         }
 
-        // Tıbbi rapor ekleme işlemi
+       
         // GET: YoneticiInterface/TibbiRaporEkle
         public IActionResult TibbiRaporEkle()
         {
@@ -377,7 +377,6 @@ namespace Prolab22__3.Controllers
             return View();
         }
 
-        // Hasta bilgilerini güncelleme işlemi
         // GET: YoneticiInterface/HastaGuncelle
         public IActionResult HastaGuncelle()
         {
@@ -416,7 +415,7 @@ namespace Prolab22__3.Controllers
             }
             return View();
         }
-        // Doktor bilgilerini güncelleme işlemi
+       
         // GET: YoneticiInterface/DoktorGuncelle
         public IActionResult DoktorGuncelle()
         {
@@ -453,7 +452,6 @@ namespace Prolab22__3.Controllers
             return View();
         }
 
-        // Randevu bilgilerini güncelleme işlemi
         // GET: YoneticiInterface/RandevuGuncelle
         public IActionResult RandevuGuncelle()
         {
@@ -491,7 +489,7 @@ namespace Prolab22__3.Controllers
             return View();
         }
 
-        // Tıbbi rapor bilgilerini güncelleme işlemi
+    
         // GET: YoneticiInterface/TibbiRaporGuncelle
         public IActionResult TibbiRaporGuncelle()
         {

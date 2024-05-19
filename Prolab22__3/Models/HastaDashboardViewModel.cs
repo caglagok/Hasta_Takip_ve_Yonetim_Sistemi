@@ -2,9 +2,9 @@
 {
     public class HastaDashboardViewModel
     {
-        public int HastaID { get; set; }  // Bu satırı ekleyin
+        public int HastaID { get; set; }  
         public IEnumerable<Randevu> Randevular { get; set; }
         public IEnumerable<TibbiRapor> TibbiRaporlar { get; set; }
-        public List<Bildirim> Bildirimler { get; set; } // Bildirimleri ekleyin
+        public List<Bildirim> Bildirimler { get; set; } 
     }
 }

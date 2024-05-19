@@ -27,8 +27,6 @@ namespace Prolab22__3.Controllers
                 return RedirectToAction("LoginDoktor", "Doktorlar");
             }
 
-            // Giriş yapmış kullanıcı ID'si (doktorID) bir şekilde elde edilmeli, burada örnek olarak 1 kullanılmıştır.
-            //int DoktorID = HttpContext.Session.GetInt32("DoktorID") ?? 1; // Varsayılan olarak 1 kullanıldı
             var model = new DoktorDashboardViewModel
             {
                 Randevular = GetDoktorunRandevulari(doktorID.Value),

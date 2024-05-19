@@ -17,7 +17,6 @@ namespace Prolab22__3.Controllers
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string is not configured.");
         }
-        // Doktorların listesini getir
         public IActionResult Index()
         {
             var doktorlar = new List<Doktor>();
@@ -57,7 +56,7 @@ namespace Prolab22__3.Controllers
                 using (var connection = new SqlConnection(_connectionString))
                 using (var command = new SqlCommand("SELECT COUNT(1) FROM Doktorlar WHERE DoktorID = @DoktorID AND Password = @Password", connection))
                 {
-                    command.Parameters.Add("@DoktorID", SqlDbType.Int).Value = DoktorID; // SqlDbType kullanıldı
+                    command.Parameters.Add("@DoktorID", SqlDbType.Int).Value = DoktorID; 
                     command.Parameters.Add("@Password", SqlDbType.NVarChar, 50).Value = password;
                     connection.Open();
                     int result = Convert.ToInt32(command.ExecuteScalar());
@@ -65,7 +64,7 @@ namespace Prolab22__3.Controllers
                     if (result == 1)
                     {
                         HttpContext.Session.SetInt32("DoktorID", Convert.ToInt32(DoktorID));
-                        HttpContext.Session.SetString("Role", "Doktor");  // Rolü oturuma kaydedin
+                        HttpContext.Session.SetString("Role", "Doktor");  
                         return RedirectToAction("Index", "DoktorInterface");
                     }
                     else
@@ -77,7 +76,6 @@ namespace Prolab22__3.Controllers
             }
             catch (Exception ex)
             {
-                // Log the error (uncomment ex variable name and write a log.)
                 ViewBag.ErrorMessage = "Bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.";
                 return View();
             }
@@ -112,7 +110,6 @@ namespace Prolab22__3.Controllers
                 return NotFound();
             }
 
-            // Doktorun randevularını getir
             var randevular = new List<Randevu>();
             using (var connection = new SqlConnection(_connectionString))
             {
@@ -133,7 +130,6 @@ namespace Prolab22__3.Controllers
                 }
             }
 
-            // ViewBag'e randevuları ekle
             ViewBag.Randevular = randevular;
 
             return View(doktor);
@@ -152,9 +148,7 @@ namespace Prolab22__3.Controllers
             if (ModelState.IsValid)
             {
                 using (var connection = new SqlConnection(_connectionString))
-                {
-                    // DoktorID otomatik olarak oluşturulacak, bu yüzden INSERT komutuna eklemeyin
-                    var command = new SqlCommand("INSERT INTO Doktorlar (Ad, Soyad, UzmanlikAlani, CalistigiHastane, Password) VALUES (@Ad, @Soyad, @UzmanlikAlani, @CalistigiHastane, @Password)", connection);
+                { var command = new SqlCommand("INSERT INTO Doktorlar (Ad, Soyad, UzmanlikAlani, CalistigiHastane, Password) VALUES (@Ad, @Soyad, @UzmanlikAlani, @CalistigiHastane, @Password)", connection);
 
                     command.Parameters.AddWithValue("@Ad", doktor.Ad);
                     command.Parameters.AddWithValue("@Soyad", doktor.Soyad);
@@ -228,8 +222,7 @@ namespace Prolab22__3.Controllers
 
                     connection.Open();
                     command.ExecuteNonQuery();
-                }
-                // Başarıyla kaydedildikten sonra bir önceki sayfaya geri dön
+                } 
                 string previousUrl = TempData["PreviousUrl"] as string;
                 if (!string.IsNullOrEmpty(previousUrl))
                 {
@@ -237,7 +230,6 @@ namespace Prolab22__3.Controllers
                 }
                 else
                 {
-                    // Eğer bir önceki sayfa yoksa varsayılan sayfaya yönlendir
                     return RedirectToAction("Index", "YoneticiInterface");
                 }
             }

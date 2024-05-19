@@ -46,7 +46,7 @@ namespace Prolab22__3.Controllers
                 Yoneticiler = yoneticiler
             };
             return View(viewModel);
-            // return View(yoneticiler);
+      
         }
 
 
@@ -77,7 +77,7 @@ namespace Prolab22__3.Controllers
                     }
                     else
                     {
-                        // Eğer kullanıcı bilgileri yanlışsa veya bulunamadıysa, hata mesajı ile login sayfasına geri dön.
+                     
                         ViewBag.ErrorMessage = "Kullanıcı ID veya şifre yanlış. Lütfen tekrar deneyin.";
                         return View();
                     }
@@ -85,7 +85,7 @@ namespace Prolab22__3.Controllers
             }
             catch (Exception ex)
             {
-                // Log the error (uncomment ex variable name and write a log.)
+              
                 ViewBag.ErrorMessage = "Bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.";
                 return View();
             }
@@ -118,7 +118,6 @@ namespace Prolab22__3.Controllers
             return hastalar;
         }
 
-        // Doktorları çeken metot
         private List<Doktor> GetDoktorlar()
         {
             var doktorlar = new List<Doktor>();

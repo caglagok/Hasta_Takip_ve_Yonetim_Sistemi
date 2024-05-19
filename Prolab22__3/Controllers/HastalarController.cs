@@ -87,7 +87,7 @@ namespace Prolab22__3.Controllers
                     if (result == 1)
                     {
                         HttpContext.Session.SetInt32("HastaID", Convert.ToInt32(HastaID));
-                        HttpContext.Session.SetString("Role", "Hasta");  // Rolü oturuma kaydedin
+                        HttpContext.Session.SetString("Role", "Hasta"); 
                         return RedirectToAction("Index", "HastaInterface");
                     }
                     else
@@ -99,7 +99,7 @@ namespace Prolab22__3.Controllers
             }
             catch (Exception ex)
             {
-                // Log the error (uncomment ex variable name and write a log.)
+                
                 ViewBag.ErrorMessage = "Bir hata oluştu. Lütfen daha sonra tekrar deneyiniz.";
                 return View();
             }
@@ -149,7 +149,6 @@ namespace Prolab22__3.Controllers
             List<TibbiRapor> raporlar = new List<TibbiRapor>();
             using (var connection = new SqlConnection(_connectionString))
             {
-                // Hasta bilgilerini çek
                 var hastaCommand = new SqlCommand("SELECT HastaID, Ad, Soyad, DogumTarihi, Cinsiyet, TelefonNumarasi, Adres FROM Hastalar WHERE HastaID = @HastaID", connection);
                 hastaCommand.Parameters.AddWithValue("@HastaID", id);
                 connection.Open();
@@ -222,7 +221,6 @@ namespace Prolab22__3.Controllers
 
             ViewBag.Randevular = randevular;
             ViewBag.TibbiRaporlar = raporlar;
-            // Önceki sayfanın URL'sini TempData'ya kaydedin
             TempData["PreviousUrl"] = Request.Headers["Referer"].ToString();
 
             return View(hasta);
@@ -257,7 +255,7 @@ namespace Prolab22__3.Controllers
                     connection.Open();
                     command.ExecuteNonQuery();
                 }
-                // Başarıyla kaydedildikten sonra bir önceki sayfaya geri dön
+              
                 string previousUrl = TempData["PreviousUrl"] as string;
                 if (!string.IsNullOrEmpty(previousUrl))
                 {
@@ -265,7 +263,7 @@ namespace Prolab22__3.Controllers
                 }
                 else
                 {
-                    // Eğer bir önceki sayfa yoksa varsayılan sayfaya yönlendir
+                
                     return RedirectToAction(nameof(Index));
                 }
             }
@@ -340,7 +338,6 @@ namespace Prolab22__3.Controllers
                 }
                 else
                 {
-                    // Eğer bir önceki sayfa yoksa varsayılan sayfaya yönlendir
                     return RedirectToAction(nameof(Index));
                 }
             }

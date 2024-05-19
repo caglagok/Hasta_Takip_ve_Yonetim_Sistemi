@@ -7,7 +7,7 @@ namespace Prolab22__3.Models
         public string UzmanlikAlani { get; set; }
         public string Hastane { get; set; }
         public int DoktorID { get; set; }
-        public string DoktorAdi { get; set; } // Eksik olan özellik ekleniyor
+        public string DoktorAdi { get; set; } 
         public DateTime RandevuTarihi { get; set; }
         public TimeSpan RandevuSaati { get; set; }
         public List<SelectListItem> UzmanlikAlanlari { get; set; }

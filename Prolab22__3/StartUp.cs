@@ -19,7 +19,7 @@ namespace Prolab22__3
         {   
             services.AddControllersWithViews();
             services.AddDistributedMemoryCache();
-            // HTTPS için gerekli konfigürasyonlar
+           
             services.AddHttpsRedirection(options =>
             {
                 options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;

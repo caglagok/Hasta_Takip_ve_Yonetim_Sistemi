@@ -2,7 +2,6 @@
 
 @{
     ViewData["Title"] = "Tıbbi Rapor Detayları";
-    // URL'nin geçerliliğini kontrol eden kod buraya taşındı
     bool isValidUrl = !string.IsNullOrWhiteSpace(Model.URL) && Uri.TryCreate(Model.URL, UriKind.Absolute, out var uriResult) && (uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps);
     var previousUrl = TempData["PreviousUrl"] as string;
 }
@@ -51,8 +50,7 @@
                 url: '@Model.URL',
                 type: 'GET',
                 success: function (response) {
-                    // Başarılı yanıt alındığında yapılacak işlemler
-                    // Örneğin, response içeriğini bir modaldan göstermek gibi
+                   
                     console.log(response);
                 },
                 error: function (xhr, status, error) {

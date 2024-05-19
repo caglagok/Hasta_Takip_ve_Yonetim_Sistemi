@@ -11,8 +11,6 @@ namespace Prolab22__3.Controllers
     public class HastaInterfaceController : Controller
     {
         private readonly string _connectionString;
-      
-
         public HastaInterfaceController(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection");
@@ -20,14 +18,12 @@ namespace Prolab22__3.Controllers
         }
 
         public IActionResult Index()
-        {
-            // Giriş yapmış kullanıcı ID'si (hastaID) bir şekilde elde edilmeli, burada örnek olarak 1 kullanılmıştır.
-            int hastaID = HttpContext.Session.GetInt32("HastaID") ?? 1; // Varsayılan olarak 1 kullanıldı
+        {   int hastaID = HttpContext.Session.GetInt32("HastaID") ?? 1; 
             var model = new HastaDashboardViewModel
             {
                 Randevular = GetRandevular(hastaID),
                 TibbiRaporlar = GetTibbiRaporlar(hastaID),
-                Bildirimler = GetHastaBildirimler(hastaID) // Bildirimleri çekin
+                Bildirimler = GetHastaBildirimler(hastaID) 
             };
             return View(model);
         }
@@ -144,14 +140,14 @@ namespace Prolab22__3.Controllers
                 {
                     while (reader.Read())
                     {
-                        var doktorAdi = reader.GetString(2); // Doktorun adını alır
-                        var doktorSoyadi = reader.GetString(3); // Doktorun soyadını alır
+                        var doktorAdi = reader.GetString(2); 
+                        var doktorSoyadi = reader.GetString(3); 
 
                         randevular.Add(new RandevuViewModel
                         {
                             RandevuTarihi = reader.GetDateTime(0),
                             RandevuSaati = reader.GetTimeSpan(1),
-                            DoktorAdi = doktorAdi + " " + doktorSoyadi // Adı ve soyadı birleştirerek atama yapar
+                            DoktorAdi = doktorAdi + " " + doktorSoyadi 
                         });
                     }
                 }

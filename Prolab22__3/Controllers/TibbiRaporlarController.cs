@@ -11,7 +11,7 @@ namespace Prolab22__3.Controllers
 {
     public class TibbiRaporlarController : Controller
     {
-        private readonly string _connectionString; // Connection String'i doğru şekilde ayarlayın
+        private readonly string _connectionString; 
 
         public TibbiRaporlarController(IConfiguration configuration)
         {
@@ -129,10 +129,10 @@ namespace Prolab22__3.Controllers
 
                     connection.Open();
                     command.ExecuteNonQuery();
-                    // Bildirim ekleyin
+                 
                     var bildirimCommand = new SqlCommand("INSERT INTO Bildirimler (KullaniciID, Role, Mesaj, OlusturmaTarihi, Okundu) VALUES (@KullaniciID, @Role, @Mesaj, @OlusturmaTarihi, @Okundu)", connection);
                     bildirimCommand.Parameters.AddWithValue("@KullaniciID", tibbiRapor.HastaID);
-                    bildirimCommand.Parameters.AddWithValue("@Role", "Hasta"); // Role değerini ekleyin
+                    bildirimCommand.Parameters.AddWithValue("@Role", "Hasta");
                     bildirimCommand.Parameters.AddWithValue("@Mesaj", "Yeni tıbbi raporunuz eklendi.");
                     bildirimCommand.Parameters.AddWithValue("@OlusturmaTarihi", DateTime.Now);
                     bildirimCommand.Parameters.AddWithValue("@Okundu", false);
@@ -234,13 +234,12 @@ namespace Prolab22__3.Controllers
             var userRole = HttpContext.Session.GetString("Role");
             using (var connection = new SqlConnection(_connectionString))
             {
-                // Silinen raporun HastaID'sini alalım
+             
                 var getHastaIdCommand = new SqlCommand("SELECT HastaID FROM TibbiRaporlar WHERE RaporID = @RaporID", connection);
                 getHastaIdCommand.Parameters.AddWithValue("@RaporID", id);
                 connection.Open();
                 hastaId = (int)getHastaIdCommand.ExecuteScalar();
 
-                // Raporu silelim
                 var deleteCommand = new SqlCommand("DELETE FROM TibbiRaporlar WHERE RaporID = @RaporID", connection);
                 deleteCommand.Parameters.AddWithValue("@RaporID", id);
                 deleteCommand.ExecuteNonQuery();
@@ -333,34 +332,6 @@ namespace Prolab22__3.Controllers
                 return NotFound("Rapor URL'si geçersiz veya erişilemez.");
             }
         }
-        /*
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public IActionResult DeleteConfirmed(int id)
-        {
-            int hastaId;
-            using (var connection = new SqlConnection(_connectionString))
-            {
-                // Silinen raporun HastaID'sini alalım
-                var getHastaIdCommand = new SqlCommand("SELECT HastaID FROM TibbiRaporlar WHERE RaporID = @RaporID", connection);
-                getHastaIdCommand.Parameters.AddWithValue("@RaporID", id);
-                connection.Open();
-                hastaId = (int)getHastaIdCommand.ExecuteScalar();
-
-                // Raporu silelim
-                var deleteCommand = new SqlCommand("DELETE FROM TibbiRaporlar WHERE RaporID = @RaporID", connection);
-                deleteCommand.Parameters.AddWithValue("@RaporID", id);
-                deleteCommand.ExecuteNonQuery();
-            }
-
-            // Bir önceki sayfaya geri dön
-            string previousUrl = TempData["PreviousUrl"] as string;
-            if (!string.IsNullOrEmpty(previousUrl))
-            {
-                return Redirect(previousUrl);
-            }
-
-           return RedirectToAction("Details", "Hastalar", new { id = hastaId });
-        }*/
+        
     }
 }

@@ -12,13 +12,13 @@ namespace Prolab22__3.Controllers
 {
     public class RandevularController:Controller
     {
-        private readonly string _connectionString; // Connection String'i doğru şekilde ayarlayın
+        private readonly string _connectionString; 
 
         public RandevularController(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string is not configured.");
         }
-        // Randevuların listesini getir
+       
         public IActionResult Index()
         {
             var randevular = new List<Randevu>();
@@ -42,7 +42,6 @@ namespace Prolab22__3.Controllers
                 }
             }
 
-            // ViewBag.Randevular'a veri atama
             ViewBag.Randevular = randevular;
 
             return View(randevular);
@@ -155,7 +154,7 @@ namespace Prolab22__3.Controllers
             ViewBag.Doktorlar = new SelectList(doktorlar, "DoktorID", "DoktorBilgisi");
             ViewBag.HastaID = hastaID.Value;
 
-            // Hasta adı ve soyadını çekme
+          
             using (var connection = new SqlConnection(_connectionString))
             {
                 var command = new SqlCommand("SELECT Ad, Soyad FROM Hastalar WHERE HastaID = @HastaID", connection);
@@ -206,8 +205,6 @@ namespace Prolab22__3.Controllers
             {
                 using (var connection = new SqlConnection(_connectionString))
                 {
-                    
-                    // Önce HastaID'nin varlığını kontrol edin
                     var checkCommand = new SqlCommand("SELECT COUNT(1) FROM Hastalar WHERE HastaID = @HastaID", connection);
                     checkCommand.Parameters.AddWithValue("@HastaID", randevu.HastaID);
                     connection.Open();
@@ -215,12 +212,11 @@ namespace Prolab22__3.Controllers
 
                     if (exists == 0)
                     {
-                        // HastaID mevcut değil
                         TempData["ErrorMessage"] = "Geçersiz Hasta ID. Lütfen geçerli bir Hasta ID giriniz.";
                         return View(randevu);
                     }
 
-                    // HastaID mevcutsa randevuyu kaydet
+                    
                     var command = new SqlCommand("INSERT INTO Randevular (HastaID, DoktorID, RandevuTarihi, RandevuSaati) VALUES (@HastaID, @DoktorID, @RandevuTarihi, @RandevuSaati)", connection);
                     command.Parameters.AddWithValue("@HastaID", randevu.HastaID);
                     command.Parameters.AddWithValue("@DoktorID", randevu.DoktorID);
@@ -228,7 +224,6 @@ namespace Prolab22__3.Controllers
                     command.Parameters.AddWithValue("@RandevuSaati", randevu.RandevuSaati);
                     command.ExecuteNonQuery();
                 
-                    // Doktora bildirim ekleyin
                     var bildirimCommand = new SqlCommand("INSERT INTO Bildirimler (KullaniciID, Role, Mesaj, OlusturmaTarihi, Okundu) VALUES (@DoktorID, 'Doktor', @Mesaj, GETDATE(), 0)", connection);
                     bildirimCommand.Parameters.AddWithValue("@DoktorID", randevu.DoktorID);
                     bildirimCommand.Parameters.AddWithValue("@Mesaj", "Yeni bir randevu alındı.");
