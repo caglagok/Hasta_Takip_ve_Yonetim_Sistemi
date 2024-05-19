@@ -36,14 +36,6 @@
             </div>
             <div class="form-group">
                 <input type="submit" value="Kaydet" class="btn btn-primary" />
-                @if (userRole == "Yonetici")
-                {
-                    <a asp-action="Details" asp-controller="Hastalar" asp-route-id="@Model.RandevuID" class="btn btn-secondary">İptal</a>
-                }
-                else if (userRole == "Hasta")
-                {
-                    <a asp-action="Index" asp-controller="HastaInterface" class="btn btn-secondary">İptal</a>
-                }
             </div>
         </form>
     </div>
