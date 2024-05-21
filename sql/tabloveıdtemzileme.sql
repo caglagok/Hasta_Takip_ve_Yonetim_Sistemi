@@ -1,0 +1,10 @@
+DELETE FROM Randevular;
+DBCC CHECKIDENT ('Randevular', RESEED, 0);
+DELETE FROM TibbiRaporlar;
+DBCC CHECKIDENT ('TibbiRaporlar', RESEED, 0);
+DELETE FROM Hastalar;
+DBCC CHECKIDENT ('Hastalar', RESEED, 0);
+DELETE FROM Doktorlar;
+DBCC CHECKIDENT ('Doktorlar', RESEED, 0);
+DELETE FROM Yoneticiler;
+DBCC CHECKIDENT ('Yoneticiler', RESEED, 0);
